@@ -76,6 +76,18 @@ def exportJSON(tree, filename="export.json"):
     with open(filename, "w", newline="", encoding="utf-8") as fichier:
         values = json.dump(data,fichier, indent=4)
 
+def importJSON(tree, filename="export.json"):
+    try:
+        with open(filename, "r", encoding="utf-8") as fichier:
+                data = json.load(fichier)
+        for row in data:
+                values = [row.get(col, "") for col in tree["columns"]]
+                tree.insert("", "end", values=values)
+    except FileNotFoundError:
+        pass 
+
+importJSON(table)
+
 tk.Button(root, text="Exporter CSV", command=lambda: exportCSV(table)).pack()
 tk.Button(root, text="Exporter JSON", command=lambda: exportJSON(table)).pack()
 
