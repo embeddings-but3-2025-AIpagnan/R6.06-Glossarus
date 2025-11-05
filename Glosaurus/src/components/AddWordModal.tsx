@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import "./AddWordModal.css";
 
 interface AddWordModalPOPUP {
@@ -14,9 +14,37 @@ export function AddWordModal({ isOpen, onClose, onAddWord }: AddWordModalPOPUP) 
 	const [currentSynonym, setCurrentSynonym] = useState("");
 	const [errors, setErrors] = useState<{ word?: string; definition?: string }>({});
 
-	if (!isOpen) return null;
+	const modalRef = useRef<HTMLDivElement | null>(null);
+	const firstInputRef = useRef<HTMLInputElement | null>(null);
+	const previouslyFocused = useRef<Element | null>(null);
 
-	const handleAddSynonym = (e: KeyboardEvent) => {
+	useEffect(() => {
+		if (isOpen) {
+			// Save previously focused element
+			previouslyFocused.current = document.activeElement;
+			// Prevent background scroll
+			const prev = document.body.style.overflow;
+			document.body.style.overflow = 'hidden';
+
+			// focus first input after a tick
+			setTimeout(() => {
+				firstInputRef.current?.focus();
+			}, 0);
+
+			const onKey = (e: KeyboardEvent) => {
+				if (e.key === 'Escape') onClose();
+			};
+			document.addEventListener('keydown', onKey);
+			return () => {
+				document.removeEventListener('keydown', onKey);
+				document.body.style.overflow = prev;
+				// restore focus
+				(previouslyFocused.current as HTMLElement | null)?.focus?.();
+			};
+		}
+	}, [isOpen]);
+
+	const handleAddSynonym = (e: any) => {
 		if (e.key === "Enter" && currentSynonym.trim() !== "") {
 			e.preventDefault();
 			setSynonyms([...synonyms, currentSynonym.trim()]);
@@ -46,15 +74,18 @@ export function AddWordModal({ isOpen, onClose, onAddWord }: AddWordModalPOPUP) 
 		}
 	};
 
+	if (!isOpen) return null;
+
 	return (
-		<div class="modal-overlay">
-			<div class="modal">
+		<div className="modal-overlay" role="dialog" aria-modal="true">
+			<div className="modal" ref={modalRef}>
 				<h2>Add a New Word</h2>
 
-				<label>Word</label>
+				<label className={"word-label"}>Word</label>
 				<input
+					ref={firstInputRef}
 					type="text"
-					class={errors.word ? "input-error" : ""}
+					className={`word-area ${errors.word ? "input-error" : ""}`}
 					placeholder="Enter the word"
 					value={word}
 					onInput={(e) => {
@@ -65,18 +96,18 @@ export function AddWordModal({ isOpen, onClose, onAddWord }: AddWordModalPOPUP) 
 						}
 					}}
 				/>
-				<nav class="attention">
-				{errors.word && (
-					<>
-					<img src="/attention.svg" alt="attention" />
-					<p class="error-text">{errors.word}</p>
-					</>
-				)}
+				<nav className="attention">
+					{errors.word && (
+						<>
+							<img src="/attention.svg" alt="attention" />
+							<p className="error-text">{errors.word}</p>
+						</>
+					)}
 				</nav>
-								
-				<label>Definition</label>
+
+				<label className="definition-label">Definition</label>
 				<textarea
-					class={errors.definition ? "input-error" : ""}
+					className={`definition-area ${errors.definition ? "input-error" : ""}`}
 					placeholder="Enter the definition"
 					value={definition}
 					onInput={(e) => {
@@ -88,17 +119,16 @@ export function AddWordModal({ isOpen, onClose, onAddWord }: AddWordModalPOPUP) 
 					}}
 				/>
 
-				<nav class="attention">
-				{errors.word && (
-					<>
-					<img src="/attention.svg" alt="attention" />
-					<p class="error-text">{errors.definition}</p>
-					</>
-				)}
+				<nav className="attention">
+					{errors.definition && (
+						<>
+							<img src="/attention.svg" alt="attention" />
+							<p className="error-text">{errors.definition}</p>
+						</>
+					)}
 				</nav>
-								
 
-				<label>Synonyms (Optional)</label>
+				<label className={"synonym-label"}>Synonyms (Optional)</label>
 				<input
 					type="text"
 					placeholder="Press enter to add a synonym"
@@ -107,11 +137,11 @@ export function AddWordModal({ isOpen, onClose, onAddWord }: AddWordModalPOPUP) 
 					onKeyDown={handleAddSynonym}
 				/>
 
-				<div class="synonym-list">
+				<div className="synonym-list">
 					{synonyms.map((syn, i) => (
-						<span key={i} class="tag">
+						<span key={i} className="tag">
 							<button
-								class="remove-btn"
+								className="remove-btn"
 								onClick={() => handleRemoveSynonym(i)}
 								aria-label="remove synonym"
 							>
@@ -122,14 +152,14 @@ export function AddWordModal({ isOpen, onClose, onAddWord }: AddWordModalPOPUP) 
 					))}
 				</div>
 				<nav>
-					<img src="/ia.png" class="logo-ia" />
-					<p class="ai-suggestion">AI Suggestions : No suggestion found</p>
+					<img src="/public/ia.png" className="logo-ia" title="AI Suggestions" />
+					<p className="ai-suggestion">AI Suggestions : No suggestion found</p>
 				</nav>
 
 
-				<div class="modal-actions">
-					<button class="cancel" onClick={onClose}>Cancel</button>
-					<button class="add" onClick={handleSubmit}>Add Word</button>
+				<div className="modal-actions">
+					<button className="cancel" onClick={onClose}>Cancel</button>
+					<button className="add" onClick={handleSubmit}>Add Word</button>
 				</div>
 			</div>
 		</div>

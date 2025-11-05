@@ -12,40 +12,63 @@
 }
 
 .modal {
-	background: #fff;
-	border-radius: 10px;
-	padding: 2rem;
-
-	width: 1000px;
-	max-width: 90%;
-	box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 	display: flex;
+	width: 960px;
+	max-width: 960px;
+	padding: 12px 48px;
 	flex-direction: column;
-	gap: 1rem;
+	justify-content: center;
+	align-items: flex-start;
+	border-radius: 16px;
+	background: #FFF;
 }
 
 .modal h2 {
-	margin-bottom: 1rem;
-	font-size: 1.5rem;
-	color: #111827;
+	color: #0D141C;
+	font-feature-settings: 'dlig' on;
+	font-size: 32px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 40px; /* 125% */
 }
 
 label {
 	font-weight: 600;
-	color: #333;
+	color: black;
+	font-size: 16px;
 }
 
 input,
 textarea {
 	width: 50%;
-	padding: 0.7rem;
+	height: 30px;
+	padding: 15px;
 	border-radius: 8px;
 	border: 2px solid #ddd;
 	font-family: 'Poppins', sans-serif;
-	font-size: 0.95rem;
+	font-size: 16px;
 	outline: none;
 	transition: border-color 0.2s, background-color 0.2s;
+	background-color: white;
 	color: #000; 
+}
+
+.word-label {
+	padding-bottom: 8px;
+}
+
+.definition-label {
+	margin-top: 18px;
+	padding-bottom: 8px;
+}
+
+.definition-area {
+	height: 120px;
+}
+
+.synonym-label {
+	margin-top: 18px;
+	padding-bottom: 8px;
 }
 
 textarea {
@@ -66,19 +89,25 @@ textarea:focus {
 
 .input-error {
 	border-color: #e63946;
-	background-color: #ffffff;
 }
 
 .error-text {
 	color: #e63946;
-	margin-top: 0.001rem;
-
+	margin: 0; /* remove small offset so text vertically centers with the svg */
+	line-height: 1; /* ensure consistent vertical centering */
 }
 
 .attention{
 	display: flex;
 	align-items: center;
 	gap: 0.3rem;
+	padding-top: 6px;
+}
+
+.attention img {
+	width: 18px;
+	height: 18px;
+	display: block; /* prevent inline-gap vertical misalignment */
 }
 
 
@@ -94,7 +123,7 @@ textarea:focus {
 	padding: 0.3rem 0.7rem;
 	border-radius: 15px;
 	font-size: 0.9rem;
-	color: #444;
+	color: black;
 	display: flex;
 	align-items: center;
 	gap: 0.4rem;
@@ -104,7 +133,7 @@ textarea:focus {
 .remove-btn {
 	background: none;
 	border: none;
-	color: #000;
+	color: black;
 	font-size: 1rem;
 	cursor: pointer;
 	line-height: 1;
@@ -120,28 +149,28 @@ textarea:focus {
 
 .ai-suggestion {
 	font-size: 0.9rem;
-	color: #888;
-	margin-top: 0.5rem;
-	font-style: italic;
+	color: black;
+	align-self: center;
 }
 
 .logo-ia{
-	width: 30px;
-	height: 30px;   
+	width: 20px;
+	height: 20px;   
 }
 
 
 nav{
 	display: flex;
 	align-items: center;
-	gap: 0.3rem;
 }
 
 .modal-actions {
 	display: flex;
+	padding: 12px 16px;
 	justify-content: flex-end;
-	gap: 1rem;
-	margin-top: 1rem;
+	align-items: center;
+	gap: 12px;
+	align-self: stretch;
 }
 
 .cancel,

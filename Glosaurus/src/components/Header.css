@@ -8,16 +8,15 @@ html, body {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start; 
-	width: 100%;
 	background-color: #B51621;
-	padding: 0 2rem;   
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	padding: 0 2rem;
+	box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 	color: white;
 	position: sticky;
 	top: 0;
 	z-index: 100;
 	height: 100px;
-	gap: 30px; 
+	gap: 30px;
 }
 
 .new-glossary {
