@@ -21,3 +21,9 @@ Exemple : uvicorn main:app --reload
 
 Donc main:app signifie : "Cherche dans le fichier main.py, l’objet nommé app."
 Le nom app pour l’objet FastAPI fait partie des conventions.
+
+Pour lancer l'application il faut taper dans le dossier du projet les commande suivante : npm install et npm run dev
+
+Après cela vous devez avoir ceci : <img width="747" height="237" alt="image" src="https://github.com/user-attachments/assets/0378779c-2942-4b5a-b135-0603156c3997" />
+
+Il ne vous reste plus qu'à cliquer sur le lien.
