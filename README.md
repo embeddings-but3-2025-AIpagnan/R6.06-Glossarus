@@ -7,7 +7,7 @@ Installation :
 
 1 - Front Preact :
 
-Commandes à lancer pour télécharger les packages et lancer l'application :
+Commandes à lancer dans le dossier front-end pour télécharger les packages et lancer l'application :
 
 Tout d'abord il vous faut node, qui permet de gerer les paquets pour les projets typescript, puis :
 npm install
@@ -19,7 +19,7 @@ Puis lancer le lien depuis un navigateur pour acceder a l'appli
 
 Le back utilise un fichier lourd, pour le récuperer, utilisez soit GIT-LFS, ou télécharger le fichier resyf.xml sur le site https://cental.uclouvain.be/resyf/download.html et placez le dans le dossier back-end/src/resyf-package/resources
 
-Commandes à lancer pour télécharger les packages eet lancer l'application :
+Commandes à lancer dans le dossier back-end pour télécharger les packages eet lancer l'application :
 
 pip install -r requirements.txt
 uvicorn main:app
