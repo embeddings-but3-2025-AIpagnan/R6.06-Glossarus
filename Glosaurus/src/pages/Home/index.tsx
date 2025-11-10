@@ -12,11 +12,11 @@ type WordItem = {
 
 const initialWords: WordItem[] = [
 	{ word: "Book", definition: "A set of written or printed sheets bound together", synonyms: ["Tome", "Volume", "Publication"] },
-	{ word: "Barrow", definition: "To take and use something temporarily before returning it", synonyms: ["Check out", "Loan"] },
-	{ word: "Periodical", definition: "A set of written or printed sheets bound together", synonyms: ["Tome", "Volume", "Publication"] },
+	{ word: "Borrow", definition: "To take and use something temporarily before returning it", synonyms: ["Check out", "Loan"] },
+	{ word: "Periodical", definition: "A publication issued at regular intervals", synonyms: ["Magazine", "Journal", "Serial"] },
 	{ word: "Shelf", definition: "A flat surface used for storing or displaying items", synonyms: ["Rack", "Ledge"] },
 	{ word: "Film", definition: "A sequence of moving images, often with sound, that tells a story, documents an event, or presents an artistic idea", synonyms: ["Movie", "Motion Picture", "Flick"] },
-	{ word: "Catalog", definition: "A complete list of items, typically in systematic order", synonyms: ["Movie", "Flick"] },
+	{ word: "Catalog", definition: "A complete list of items, typically in systematic order", synonyms: ["Inventory", "List", "Directory"] },
 ];
 
 export function Glossaire() {
@@ -42,7 +42,7 @@ export function Glossaire() {
 	};
 
 	const [isExporting, setIsExporting] = useState(false);
-	const [exportError, setExportError] = useState<string | null>(null);
+	const [, setExportError] = useState<string | null>(null);
 
 	const handleExport = async () => {
 		setExportError(null);
@@ -87,7 +87,7 @@ export function Glossaire() {
 		<div className="glossaire">
 			<div className="glossaire-header">
 				<nav className="deco">
-					<img src="/deco.svg" title="Decoration" />
+					<img src="/deco.svg" title="Decoration" alt="Decoration" />
 					<h1>Media Library</h1>
 				</nav>
 
@@ -100,12 +100,12 @@ export function Glossaire() {
 					<tr>
 						<th>Word</th>
 						<th>Definition</th>
-						<th>Synonym</th>
+						<th>Synonyms</th>
 					</tr>
 				</thead>
 				<tbody>
-					{words.map((w, idx) => (
-						<tr key={idx}>
+					{words.map((w) => (
+						<tr key={w.word}>
 							<td><span className="word">{w.word}</span></td>
 							<td>{w.definition}</td>
 							<td>
@@ -120,7 +120,7 @@ export function Glossaire() {
 				</tbody>
 			</table>
 			<button className="export" onClick={handleExport} disabled={isExporting}>
-				{isExporting ? 'Exporting...' : 'Export MarkDown'}
+				{isExporting ? 'Exporting...' : 'Export JSON'}
 			</button>
 			<button onClick={handleReset}>Reset</button>
 
