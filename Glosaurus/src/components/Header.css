@@ -65,9 +65,7 @@ html, body {
 	transition: color 0.2s, border-bottom 0.2s;
 }
 
-.nav a:hover {
-	color: #1f76a8;
-}
+
 
 .nav a {
 	border-bottom: 2px solid #B51621;
@@ -86,21 +84,7 @@ html, body {
 	font-family: 'Inter';
 }
 
-.new-glossary {
-	
-	background-color: #FEFEFE;
-	color: rgb(0, 0, 0);
-	font-weight: 1000;
-	border: none;
-	border-radius: 6px;
-	padding: 1rem 1rem;
-	cursor: pointer;
-	transition: background-color 0.2s;
-}
 
-.new-glossary:hover {
-	background-color: #acacac;
-}
 
 
 @media (max-width: 640px) {

@@ -29,7 +29,7 @@
 	font-size: 32px;
 	font-style: normal;
 	font-weight: 700;
-	line-height: 40px; /* 125% */
+	line-height: 40px;
 }
 
 label {
@@ -93,8 +93,8 @@ textarea:focus {
 
 .error-text {
 	color: #e63946;
-	margin: 0; /* remove small offset so text vertically centers with the svg */
-	line-height: 1; /* ensure consistent vertical centering */
+	margin: 0; 
+	line-height: 1; 
 }
 
 .attention{
@@ -107,7 +107,7 @@ textarea:focus {
 .attention img {
 	width: 18px;
 	height: 18px;
-	display: block; /* prevent inline-gap vertical misalignment */
+	display: block; 
 }
 
 

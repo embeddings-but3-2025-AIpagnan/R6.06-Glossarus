@@ -8,7 +8,15 @@ interface AddWordModalPOPUP {
 }
 
 
-export function SynonymSuggestion({ word, userSynonyms, onAddSynonym }) {
+export function SynonymSuggestion({
+  word,
+  userSynonyms,
+  onAddSynonym,
+}: {
+  word: string
+  userSynonyms: string[]
+  onAddSynonym: (synonym: string) => void
+}) {
   const [synonyms, setSynonyms] = useState<string[]>([]);
   const [visibleSynonyms, setVisibleSynonyms] = useState<string[]>([]);
   const [startIndex, setStartIndex] = useState(0);
@@ -253,7 +261,7 @@ export function AddWordModal({ isOpen, onClose, onAddWord }: AddWordModalPOPUP) 
 					<SynonymSuggestion
 					word={word}
 					userSynonyms={synonyms}
-					onAddSynonym={(syn) => {
+					onAddSynonym={(syn: string) => {
 						if (!synonyms.includes(syn)) {
 						setSynonyms([...synonyms, syn]);
 						}

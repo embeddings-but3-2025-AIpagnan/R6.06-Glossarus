@@ -1,0 +1,106 @@
+.modal-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+}
+
+.modal-content {
+	display: flex;
+	width: 708px;
+	height: 508px;
+	max-width: 960px;
+	padding: 32px 48px;
+	flex-direction: column;
+	border-radius: 16px;
+	background: #FFF;
+	box-sizing: border-box;
+	gap: 2rem;
+}
+
+.modal-content h2 {
+	font-size: 32px;
+	font-weight: 700;
+	color: #0D141C;
+	width: 100%;
+	text-align: center;
+	margin: 0;
+}
+
+
+.modal-form {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	width: 100%;
+	gap: 2rem;
+}
+
+.modal-content label {
+	display: flex;
+	flex-direction: column;
+	font-weight: 600;
+	color: #000;
+	font-size: 16px;
+	gap: 0.75rem;
+	width: 100%;
+}
+
+
+
+.input-name {
+    width: 100%;
+    height: 30px;
+}
+
+
+.input-description {
+    width: 100%;
+    height: 80px; 
+}
+
+.modal-content input::placeholder {
+	color: #888888;
+}
+
+.modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+	width: 100%;
+	margin-top: auto; 
+}
+
+.modal-actions button {
+	padding: 0.9rem 1.6rem;
+	border-radius: 8px;
+	border: none;
+	font-weight: 600;
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.2s;
+}
+
+.modal-actions .close-btn {
+	background-color: #888;
+	color: white;
+}
+
+.modal-actions .close-btn:hover {
+	background-color: #555;
+}
+
+.modal-actions .add-btn {
+	background-color: #b32134;
+	color: white;
+}
+
+.modal-actions .add-btn:hover {
+	background-color: #921b2a;
+}
