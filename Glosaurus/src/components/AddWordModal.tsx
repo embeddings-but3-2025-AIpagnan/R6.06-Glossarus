@@ -7,6 +7,103 @@ interface AddWordModalPOPUP {
 	onAddWord: (word: string, definition: string, synonyms: string[]) => void;
 }
 
+
+export function SynonymSuggestion({ word, userSynonyms, onAddSynonym }) {
+  const [synonyms, setSynonyms] = useState<string[]>([]);
+  const [visibleSynonyms, setVisibleSynonyms] = useState<string[]>([]);
+  const [startIndex, setStartIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!word || word.trim() === "") return;
+
+    const timeout = setTimeout(() => {
+      setLoading(true);
+
+      fetch("http://127.0.0.1:8000/synonym/getSynonym", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          word: word.trim(),
+          synonyms: userSynonyms || [],
+        }),
+      })
+        .then(async (res) => {
+          const data = await res.json();
+          console.log("Réponse API :", data);
+          if (data.synonyms && data.synonyms.length > 0) {
+            setSynonyms(data.synonyms);
+            setVisibleSynonyms(data.synonyms.slice(0, 5));
+            setStartIndex(0);
+          } else {
+            setSynonyms([]);
+            setVisibleSynonyms([]);
+          }
+        })
+        .catch((err) => {
+          console.error("Erreur API :", err);
+          setSynonyms([]);
+          setVisibleSynonyms([]);
+        })
+        .finally(() => setLoading(false));
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [word, userSynonyms]);
+
+  const handleReload = () => {
+    if (synonyms.length <= 5) return;
+    const nextIndex = (startIndex + 5) % synonyms.length;
+    const nextSlice = [
+      ...synonyms.slice(nextIndex, nextIndex + 5),
+      ...synonyms.slice(0, Math.max(0, (nextIndex + 5) - synonyms.length)),
+    ];
+    setVisibleSynonyms(nextSlice);
+    setStartIndex(nextIndex);
+  };
+
+  return (
+    <div className="ai-suggestion">
+      <p>
+        AI Suggestions :{" "}
+        {loading ? (
+          "Chargement..."
+        ) : visibleSynonyms.length > 0 ? (
+          <>
+            {visibleSynonyms.map((syn, i) => (
+              <span
+                key={i}
+                className="clickable-synonym"
+                onClick={() => onAddSynonym(syn)}
+                title="Cliquer pour ajouter ce synonyme"
+              >
+                {syn}
+                {i < visibleSynonyms.length - 1 && ", "}
+              </span>
+            ))}
+          </>
+        ) : (
+          "No suggestion found"
+        )}
+      </p>
+
+      {!loading && synonyms.length > 5 && (
+        <button
+          onClick={handleReload}
+          className="reload-btn"
+          title="Afficher d'autres synonymes"
+        >
+          🔁
+        </button>
+      )}
+    </div>
+  );
+}
+
+
+export default SynonymSuggestion;
+
+
 export function AddWordModal({ isOpen, onClose, onAddWord }: AddWordModalPOPUP) {
 	const [word, setWord] = useState("");
 	const [definition, setDefinition] = useState("");
@@ -153,10 +250,17 @@ export function AddWordModal({ isOpen, onClose, onAddWord }: AddWordModalPOPUP) 
 				</div>
 				<nav>
 					<img src="/public/ia.png" className="logo-ia" title="AI Suggestions" />
-					<p className="ai-suggestion">AI Suggestions : No suggestion found</p>
+					<SynonymSuggestion
+					word={word}
+					userSynonyms={synonyms}
+					onAddSynonym={(syn) => {
+						if (!synonyms.includes(syn)) {
+						setSynonyms([...synonyms, syn]);
+						}
+					}}
+					/>
+
 				</nav>
-
-
 				<div className="modal-actions">
 					<button className="cancel" onClick={onClose}>Cancel</button>
 					<button className="add" onClick={handleSubmit}>Add Word</button>

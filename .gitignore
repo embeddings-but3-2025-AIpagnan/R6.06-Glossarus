@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+<<<<<<< HEAD:Glosaurus/.gitignore
+=======
+
+
+**/__pycache__/
+venv/
+package-lock.json
+>>>>>>> c6859a395e643488020d5335d3374f608d5d1de6:.gitignore
