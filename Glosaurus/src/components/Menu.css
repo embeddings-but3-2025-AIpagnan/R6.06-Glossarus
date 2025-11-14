@@ -152,6 +152,10 @@
     max-width: 20ch;
     border-bottom: 1px solid #e4e6eb;
 }
+.glossaire-table td.Name {
+    color: #000000;
+}
+
 
 .glossaire-table tr.clickable:hover {
     background-color: #f9f9f9;
@@ -179,4 +183,17 @@
 .delete-btn:hover {
     color: #921b2a;
     transform: scale(1.1);
+}
+
+.edit-btn:hover {
+    color: #000000;
+    transform: scale(1.1);
+}
+
+.edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: color 0.2s, transform 0.1s;
 }

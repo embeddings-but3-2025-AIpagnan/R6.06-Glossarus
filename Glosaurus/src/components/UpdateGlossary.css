@@ -1,0 +1,9 @@
+.submit-btn{
+    background-color: #b32134;
+	color: white;
+}
+
+.modal-actions .submit-btn:hover {
+	background-color: #921b2a;
+}
+

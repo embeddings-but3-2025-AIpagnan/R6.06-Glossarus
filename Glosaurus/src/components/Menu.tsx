@@ -4,11 +4,13 @@ import './Menu.css';
 import { AddGlossaryModal } from './AddGlossaryModal';
 import { importGlossaryFromFile } from '../utils/importExport';
 import { loadFromStorage, saveToStorage } from "../utils/storage";
-import { Trash2 } from 'lucide-preact'; // 🗑️ icône de poubelle
+import { Trash2 } from 'lucide-preact'; 
+import { UpdateGlossary } from "./UpdateGlossary";
 
 interface Glossary {
     name: string;
     description: string;
+    lastModified: string;
 }
 
 export function Menu() {
@@ -16,14 +18,21 @@ export function Menu() {
     const [search, setSearch] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [glossaries, setGlossaries] = useState<Glossary[]>(() => loadFromStorage(STORAGE_KEY, []));
+    const [editingGlossary, setEditingGlossary] = useState<Glossary | null>(null);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+
     const { route } = useLocation();
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         saveToStorage(STORAGE_KEY, glossaries);
     }, [glossaries]);
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const handleAddGlossary = (newGlossary: Glossary) => {
+    const handleAddGlossary = (glossary: { name: string; description: string }) => {
+        const newGlossary: Glossary = {
+            ...glossary,
+            lastModified: new Date().toLocaleString()
+        };
         setGlossaries([...glossaries, newGlossary]);
         setIsModalOpen(false);
     };
@@ -31,49 +40,48 @@ export function Menu() {
     const handleFileImport = async (e: Event) => {
         const target = e.target as HTMLInputElement;
         const file = target.files?.[0];
-        
         if (!file) return;
 
         try {
             const importedGlossary = await importGlossaryFromFile(file);
-            
-            // Stocker les mots du glossaire dans le localStorage
+
             const storageKey = `glossary_${importedGlossary.name}`;
             saveToStorage(storageKey, importedGlossary.words);
-            
-            // Convertir le glossaire importé au format local (juste nom + description pour la liste)
+
             const newGlossary: Glossary = {
                 name: importedGlossary.name,
-                description: importedGlossary.description || `Import - ${importedGlossary.words.length} word(s)`
+                description: importedGlossary.description || `Import - ${importedGlossary.words.length} word(s)`,
+                lastModified: new Date().toLocaleString()
             };
+
             setGlossaries([...glossaries, newGlossary]);
-            window.alert(`Glossary "${importedGlossary.name}" imported successfully! (${importedGlossary.words.length} words)`);
+            window.alert(`Glossary "${importedGlossary.name}" imported successfully!`);
         } catch (error) {
             window.alert(`Error during import: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
 
-        // Reset input
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-    };
-
-    const handleImportClick = () => {
-        fileInputRef.current?.click();
+        if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     const handleDeleteGlossary = (index: number) => {
         if (confirm("Delete this glossary?")) {
-            const updated = glossaries.filter((_, i) => i !== index);
-            setGlossaries(updated);
+            const glossaryToDelete = glossaries[index];
+            localStorage.removeItem(`glossary_${glossaryToDelete.name}`);
+            setGlossaries(glossaries.filter((_, i) => i !== index));
         }
     };
 
     const handleOpenGlossary = (name: string) => {
+        setGlossaries(glossaries.map(g =>
+            g.name === name
+                ? { ...g, lastModified: new Date().toLocaleString() }
+                : g
+        ));
+
         route(`/glossaire/${encodeURIComponent(name)}`);
     };
 
-    const filteredGlossaries = glossaries.filter((g) =>
+    const filteredGlossaries = glossaries.filter(g =>
         g.name.toLowerCase().includes(search.toLowerCase())
     );
 
@@ -86,7 +94,7 @@ export function Menu() {
                 </nav>
 
                 <div className="header-buttons">
-                    <button className="import-btn" onClick={handleImportClick} title="Import a glossary">
+                    <button className="import-btn" onClick={() => fileInputRef.current?.click()}>
                         <img src="/import.svg" alt="Import icon" />
                         Import
                     </button>
@@ -102,7 +110,6 @@ export function Menu() {
                 accept=".json,.md,.markdown"
                 onChange={handleFileImport}
                 className="hidden-file-input"
-                aria-label="Select a file to import"
             />
 
             <input
@@ -118,19 +125,31 @@ export function Menu() {
                     <tr>
                         <th>Name</th>
                         <th>Description</th>
+                        <th>Last Modified</th>
                         <th className="actions-column"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {filteredGlossaries.map((g, index) => (
                         <tr key={index}>
-                            <td onClick={() => handleOpenGlossary(g.name)} className="clickable">{g.name}</td>
+                            <td onClick={() => handleOpenGlossary(g.name)} className="Name">{g.name}</td>
                             <td onClick={() => handleOpenGlossary(g.name)} className="clickable">{g.description}</td>
+                            <td>{g.lastModified || "Never"}</td>
                             <td className="actions-cell">
+                                <button
+                                    className="edit-btn"
+                                    onClick={() => {
+                                        setEditingGlossary(g);
+                                        setIsUpdateModalOpen(true);
+                                    }}
+                                    title="Modifier"
+                                >
+                                    <img src="/modifier.svg" alt="Modifier" />
+                                </button>
+
                                 <button
                                     className="delete-btn"
                                     onClick={() => handleDeleteGlossary(index)}
-                                    title="Delete Glossary"
                                 >
                                     <Trash2 size={20} />
                                 </button>
@@ -140,8 +159,45 @@ export function Menu() {
                 </tbody>
             </table>
 
+            {isUpdateModalOpen && editingGlossary && (
+                <UpdateGlossary
+                    isOpen={isUpdateModalOpen}
+                    onClose={() => setIsUpdateModalOpen(false)}
+                    initialData={{
+                        word: editingGlossary.name,
+                        definition: editingGlossary.description,
+                        synonyms: []
+                    }}
+                    onAddWord={(newName, newDescription) => {
+                        const oldStorageKey = `glossary_${editingGlossary.name}`;
+                        const newStorageKey = `glossary_${newName}`;
+
+                        
+                        if (newName !== editingGlossary.name) {
+                            const existingWords = loadFromStorage(oldStorageKey, []);
+                            saveToStorage(newStorageKey, existingWords);
+                            localStorage.removeItem(oldStorageKey);
+                        }
+
+                        
+                        setGlossaries(glossaries.map(g =>
+                            g.name === editingGlossary.name
+                                ? {
+                                    ...g,
+                                    name: newName,
+                                    description: newDescription,
+                                    lastModified: new Date().toLocaleString()
+                                }
+                                : g
+                        ));
+
+                        setIsUpdateModalOpen(false);
+                    }}
+                />
+            )}
+
             {isModalOpen && (
-                <AddGlossaryModal 
+                <AddGlossaryModal
                     onClose={() => setIsModalOpen(false)}
                     onAdd={handleAddGlossary}
                 />

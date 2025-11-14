@@ -1,9 +1,10 @@
 import { useState } from 'preact/hooks';
 import './AddGlossaryModal.css';
 
+
 interface AddGlossaryModalProps {
-    onClose: () => void;
     onAdd: (glossary: { name: string; description: string }) => void;
+    onClose: () => void;
 }
 
 export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {
@@ -12,7 +13,7 @@ export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {
 
     const handleSubmit = (e: Event) => {
         e.preventDefault();
-        if (!name.trim() || !description.trim()) return; // éviter les champs vides
+        if (!name.trim() || !description.trim()) return;
         onAdd({ name, description });
         setName('');
         setDescription('');
