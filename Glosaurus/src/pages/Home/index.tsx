@@ -5,7 +5,7 @@ import { AddWordModal } from "../../components/AddWordModal";
 import { ExportModal } from "../../components/ExportModal";
 import "./style.css";
 import { useRoute } from "preact-iso";
-import { Trash2, Edit2 } from "lucide-preact";
+import { Trash2 } from "lucide-preact";
 
 type WordItem = {
 	word: string;
@@ -27,6 +27,17 @@ export function Glossaire() {
 	const [words, setWords] = useState<WordItem[]>(() =>
 		loadFromStorage(STORAGE_KEY, initialWords)
 	);
+	
+	// Load glossary description from the glossaries list
+	const [glossaryDescription, setGlossaryDescription] = useState<string | undefined>();
+	
+	useEffect(() => {
+		const glossaries = loadFromStorage("glossaries", []) as Array<{name: string; description: string}>;
+		const currentGlossary = glossaries.find((g) => g.name === glossaryName);
+		if (currentGlossary) {
+			setGlossaryDescription(currentGlossary.description);
+		}
+	}, [glossaryName]);
 
 	useEffect(() => {
 		saveToStorage(STORAGE_KEY, words);
@@ -157,6 +168,7 @@ export function Glossaire() {
 				onClose={() => setIsExportModalOpen(false)}
 				glossary={{
 					name: glossaryName,
+					description: glossaryDescription,
 					words: words,
 				}}
 			/>

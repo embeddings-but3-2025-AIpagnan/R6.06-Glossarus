@@ -27,31 +27,33 @@ export function exportToJSON(glossary: Glossary): string {
 }
 
 /**
- * Export glossary to Markdown format
+ * Export glossary to Markdown format (table format)
  */
 export function exportToMarkdown(glossary: Glossary): string {
-    let markdown = `# ${glossary.name}\n\n`;
+    // Helper function to escape pipe characters in table cells
+    const escapeCell = (text: string): string => {
+        return text.replace(/\|/g, '\\|');
+    };
     
-    // Add description if present, otherwise show word count
+    let markdown = `# ${glossary.name}\n`;
+    
+    // Add description as subtitle (### format)
     if (glossary.description) {
-        markdown += `_${glossary.description}_\n\n`;
+        markdown += `### ${glossary.description}\n\n`;
     } else {
-        markdown += `_No description provided_\n\n`;
+        markdown += `### Glossary\n\n`;
     }
     
-    markdown += `---\n\n`;
-
-    glossary.words.forEach((word, index) => {
-        markdown += `## ${index + 1}. ${word.word}\n\n`;
-        markdown += `**Definition:** ${word.definition}\n\n`;
-        
-        if (word.synonyms && word.synonyms.length > 0) {
-            markdown += `**Synonyms:** ${word.synonyms.join(', ')}\n\n`;
-        } else {
-            markdown += `**Synonyms:** _None_\n\n`;
-        }
-        
-        markdown += `---\n\n`;
+    // Table header
+    markdown += `| Word | Definition | Synonyms |\n`;
+    markdown += `| --- | --- | --- |\n`;
+    
+    // Table rows
+    glossary.words.forEach((word) => {
+        const synonymsText = word.synonyms && word.synonyms.length > 0 
+            ? word.synonyms.join(', ') 
+            : '_None_';
+        markdown += `| ${escapeCell(word.word)} | ${escapeCell(word.definition)} | ${escapeCell(synonymsText)} |\n`;
     });
 
     return markdown;
@@ -112,75 +114,64 @@ export function importFromMarkdown(markdownString: string): Glossary {
         glossaryName = h1Match[1].trim();
     }
     
-    // Extract description (italic text after title, before first separator)
-    // Look for _text_ pattern after the title
-    const descMatch = markdownString.match(/_(.+?)_/s);
-    if (descMatch) {
-        const desc = descMatch[1].trim();
-        // Only use as description if it's not the word count format or "No description"
-        if (!desc.match(/Glossaire contenant \d+ mot\(s\)/) && 
-            desc !== 'No description provided' &&
-            !desc.match(/Glossary containing \d+ word\(s\)/i) &&
-            !desc.match(/Import - \d+ word\(s\)/)) {
+    // Extract description from H3 subtitle
+    const h3Match = markdownString.match(/^###\s+(.+)$/m);
+    if (h3Match) {
+        const desc = h3Match[1].trim();
+        // Only exclude "Glossary" if it's exactly that word
+        if (desc && desc !== 'Glossary') {
             description = desc;
         }
     }
     
-    let currentWord: Partial<WordItem> | null = null;
+    // Parse table format
+    let inTable = false;
     
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         
-        // Match H2 headers (word titles)
-        const wordMatch = line.match(/^##\s+(?:\d+\.\s+)?(.+)$/);
-        if (wordMatch) {
-            // Save previous word if exists
-            if (currentWord && currentWord.word && currentWord.definition) {
+        // Detect table header
+        if (line.startsWith('| Word') || line.startsWith('| Mot')) {
+            inTable = true;
+            continue;
+        }
+        
+        // Skip separator line
+        if (line.startsWith('| ---')) {
+            continue;
+        }
+        
+        // Parse table rows
+        if (inTable && line.startsWith('|')) {
+            // Split by unescaped pipes only (not \|)
+            const cells = line
+                .split(/(?<!\\)\|/)
+                .map(c => c.trim())
+                .filter(c => c)
+                .map(c => c.replace(/\\\|/g, '|')); // Unescape pipes in content
+            
+            if (cells.length >= 3) {
+                const word = cells[0];
+                const definition = cells[1];
+                const synonymsText = cells[2];
+                
+                // Parse synonyms
+                let synonyms: string[] = [];
+                if (synonymsText && synonymsText !== '_None_' && synonymsText !== '_Aucun_') {
+                    synonyms = synonymsText.split(',').map(s => s.trim()).filter(s => s);
+                }
+                
                 words.push({
-                    word: currentWord.word,
-                    definition: currentWord.definition,
-                    synonyms: currentWord.synonyms || []
+                    word,
+                    definition,
+                    synonyms
                 });
             }
-            
-            // Start new word
-            currentWord = {
-                word: wordMatch[1].trim(),
-                definition: '',
-                synonyms: []
-            };
-            continue;
         }
-        
-        // Match definition (supports both French and English)
-        const defMatch = line.match(/^\*\*(Définition|Definition):\*\*\s+(.+)$/i);
-        if (defMatch && currentWord) {
-            currentWord.definition = defMatch[2].trim();
-            continue;
-        }
-        
-        // Match synonyms (supports both French and English)
-        const synMatch = line.match(/^\*\*(Synonymes?|Synonyms?):\*\*\s+(.+)$/i);
-        if (synMatch && currentWord) {
-            const synText = synMatch[2].trim();
-            if (synText !== '_Aucun_' && synText !== 'Aucun' && synText !== '_None_' && synText !== 'None') {
-                currentWord.synonyms = synText.split(',').map(s => s.trim()).filter(s => s);
-            }
-            continue;
-        }
-    }
-    
-    // Don't forget the last word
-    if (currentWord && currentWord.word && currentWord.definition) {
-        words.push({
-            word: currentWord.word,
-            definition: currentWord.definition,
-            synonyms: currentWord.synonyms || []
-        });
     }
     
     if (words.length === 0) {
-        throw new Error('Aucun mot trouvé dans le fichier Markdown');
+        throw new Error('No words found in Markdown file');
     }
     
     return {

@@ -14,14 +14,13 @@
 .modal-content {
 	display: flex;
 	width: 708px;
-	height: 508px;
 	max-width: 960px;
 	padding: 32px 48px;
 	flex-direction: column;
 	border-radius: 16px;
 	background: #FFF;
 	box-sizing: border-box;
-	gap: 2rem;
+	gap: 1rem;
 }
 
 .modal-content h2 {
@@ -29,7 +28,6 @@
 	font-weight: 700;
 	color: #0D141C;
 	width: 100%;
-	text-align: center;
 	margin: 0;
 }
 
@@ -39,34 +37,25 @@
 	flex-direction: column;
 	flex: 1;
 	width: 100%;
-	gap: 2rem;
 }
 
 .modal-content label {
-	display: flex;
-	flex-direction: column;
 	font-weight: 600;
-	color: #000;
+	color: black;
 	font-size: 16px;
-	gap: 0.75rem;
-	width: 100%;
 }
 
 
 
 .input-name {
-    width: 100%;
+    width: 65%;
     height: 30px;
 }
 
 
-.input-description {
-    width: 100%;
+.textarea-description {
+    width: 65%;
     height: 80px; 
-}
-
-.modal-content input::placeholder {
-	color: #888888;
 }
 
 .modal-actions {
@@ -103,4 +92,19 @@
 
 .modal-actions .add-btn:hover {
 	background-color: #921b2a;
+}
+
+.name-label{
+	padding-bottom: 8px;
+}
+
+.description-label {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.glossary-required {
+	color: #e63946;
+	margin-left: 2px;
+	font-size: 20px;
 }

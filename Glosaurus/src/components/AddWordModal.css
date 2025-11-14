@@ -71,6 +71,12 @@ textarea {
 	padding-bottom: 8px;
 }
 
+.required {
+	color: #e63946;
+	margin-left: 2px;
+	font-size: 20px;
+}
+
 textarea {
 	resize: none;
 }

@@ -1,45 +1,10 @@
-# Computer Science Glossary
+﻿# Computer Science Glossary
+### Glossary of common terms in computer science
 
-_Common terms used in software development and information technology._
-
----
-
-## 1. API
-
-**Definition:** Application Programming Interface allowing interaction between different software systems
-
-**Synonyms:** Interface, Web Service
-
----
-
-## 2. Framework
-
-**Definition:** Standardized software structure serving as a foundation for application development
-
-**Synonyms:** Software Framework, Infrastructure
-
----
-
-## 3. Debug
-
-**Definition:** Process of identifying and correcting errors in a program
-
-**Synonyms:** Debugging, Troubleshooting
-
----
-
-## 4. Repository
-
-**Definition:** Centralized storage space for source code and its versions
-
-**Synonyms:** Repo, Code Repository
-
----
-
-## 5. Commit
-
-**Definition:** Action of recording changes in a version control system
-
-**Synonyms:** Check-in, Save
-
----
+| Word | Definition | Synonyms |
+| --- | --- | --- |
+| Algorithm | A step-by-step procedure for solving a problem or completing a task | Procedure, Method, Process |
+| Variable | A storage location identified by a name that holds a value which can change | Container, Placeholder |
+| Function | A reusable block of code that performs a specific task | Method, Subroutine, Procedure |
+| Loop | A programming construct that repeats a block of code multiple times | Iteration, Cycle |
+| Array | A data structure that holds multiple values of the same type in a single variable | List, Collection, Vector |

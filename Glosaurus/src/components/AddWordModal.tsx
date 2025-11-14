@@ -202,7 +202,10 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 			<div className="modal" ref={modalRef}>
 				<h2>Add a New Word</h2>
 
-				<label className={"word-label"}>Word</label>
+				<label className={"word-label"}>
+					<span>Word</span>
+					<span className="required">*</span>
+				</label>
 				<input
 					ref={firstInputRef}
 					type="text"
@@ -226,7 +229,11 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 					)}
 				</nav>
 
-				<label className="definition-label">Definition</label>
+				<label className="definition-label">
+					<span>Definition</span>
+					<span className="required">*</span>
+					
+				</label>
 				<textarea
 					className={`definition-area ${errors.definition ? "input-error" : ""}`}
 					placeholder="Enter the definition"
@@ -273,7 +280,7 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 					))}
 				</div>
 				<nav>
-					<img src="/public/ia.png" className="logo-ia" title="AI Suggestions" />
+					<img src="/ia.png" className="logo-ia" title="AI Suggestions" />
 					<SynonymSuggestion
 					word={word}
 					userSynonyms={synonyms}
