@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import './AddGlossaryModal.css';
 
+
 interface AddGlossaryModalProps {
-    onClose: () => void;
     onAdd: (glossary: { name: string; description: string }) => void;
+    onClose: () => void;
 }
 
 export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {

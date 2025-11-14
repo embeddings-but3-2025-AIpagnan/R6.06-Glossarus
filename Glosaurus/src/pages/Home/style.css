@@ -1,4 +1,4 @@
-	/* 🎨 Variables globales */
+
 	:root {
 		--color-primary: #b32134;
 		--color-primary-dark: #921b2a;
@@ -10,7 +10,7 @@
 		--font-main: 'Poppins', sans-serif;
 	}
 
-	/* 🌍 Base */
+
 	body {
 		background-color: var(--color-bg);
 		margin: 0;
@@ -18,7 +18,7 @@
 		font-family: var(--font-main);
 	}
 
-	/* 📚 Glossaire global */
+
 	.glossaire {
 		display: flex;
 		flex-direction: column;
@@ -28,7 +28,6 @@
 		animation: fadeIn 0.5s ease-in-out;
 	}
 
-	/* 🧾 En-tête */
 	.glossaire-header {
 		width: 75%;
 		display: flex;
@@ -51,7 +50,6 @@
 		align-items: center;
 	}
 
-	/* 🧠 Boutons du header */
 	.header-buttons {
 		display: flex;
 		gap: 1rem;
@@ -102,7 +100,7 @@
 		transform: none;
 	}
 
-	/* 📋 Tableau */
+
 .glossaire-table {
 	width: 75%;
 	border-collapse: separate;
@@ -121,7 +119,7 @@
 	padding: 1rem 1.5rem;
 	text-align: left;
 	font-size: 1rem;
-	vertical-align: top; /* ✅ texte en haut de la cellule */
+	vertical-align: top;
 }
 
 .glossaire-table th {
@@ -157,19 +155,19 @@
 	}
 
 	.action-cell {
-  vertical-align: top; /* si tu veux le texte en haut */
+  vertical-align: top; 
   border-left: none;
-  padding: 0; /* supprime padding inutile */
+  padding: 0; 
 }
 
-/* Conteneur flex pour centrer les boutons */
+
 .action-buttons {
   display: flex;
-  flex-direction: row;       /* icônes côte à côte */
-  justify-content: center;   /* centre horizontalement */
-  align-items: center;       /* centre verticalement */
-  height: 100%;              /* prend toute la hauteur de la cellule */
-  gap: 10px;                 /* espace entre les boutons */
+  flex-direction: row;       
+  justify-content: center;   
+  align-items: center;       
+  height: 100%;              
+  gap: 10px;                 
 }
 
 .action-buttons button {
