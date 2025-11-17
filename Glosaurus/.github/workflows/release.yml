@@ -23,9 +23,6 @@ jobs:
             args: ""
 
     runs-on: ${{ matrix.platform }}
-    defaults:
-      run:
-        working-directory: ./Glosaurus
     steps:
       - uses: actions/checkout@v4
 
@@ -46,6 +43,7 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - name: Install frontend dependencies
+        working-directory: ./Glosaurus
         run: npm install
 
       - name: Setup Python (Windows only)
@@ -56,8 +54,8 @@ jobs:
 
       - name: Install PyInstaller and compile backend (Windows only)
         if: matrix.platform == 'windows-latest'
+        working-directory: ./Glosaurus/back-end
         run: |
-          cd back-end
           pip install -r requirements.txt
           pip install pyinstaller
           pyinstaller run_backend.spec --clean
@@ -68,6 +66,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          projectPath: ./Glosaurus
           tagName: ${{ github.ref_name }}
           releaseName: "Glosaurus ${{ github.ref_name }}"
           releaseBody: "See the assets to download this version and install."
