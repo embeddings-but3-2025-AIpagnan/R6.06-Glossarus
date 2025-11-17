@@ -18,13 +18,17 @@ async def getSynonym(request: Request):
     req = await request.json()
     word = req.get("word")
     synonyms = req.get("synonyms")
+    definition = req.get("definition")
+
+    print(word)
     print(synonyms)
-    context = synonyms
-    context.append(word)
-    print(context)
+    print(definition)
 
 
-    suggestion_synonyms = lm.getSynonyms(word, context)
+
+
+
+    suggestion_synonyms = lm.getSynonyms(word, definition, synonyms)
     print(suggestion_synonyms.split(","))
 
     return {"synonyms" : suggestion_synonyms.split(",")}
