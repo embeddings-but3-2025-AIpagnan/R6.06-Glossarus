@@ -43,22 +43,23 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .invoke_handler(tauri::generate_handler![greet, proxy_request])
         .setup(|app| {
-            let mut backend_path = app
+            let resource_dir = app
                 .path()
                 .resource_dir()
-                .expect("Failed to get resource dir")
-                .join("bin");
+                .expect("Failed to get resource dir");
 
-            // Détection de l'OS pour choisir le binaire
-            backend_path = backend_path.join(if cfg!(target_os = "windows") {
-                "backend.exe"
-            } else {
-                "backend"
-            });
+            // Le backend.exe est dans resource_dir/bin/
+            let backend_path = resource_dir
+                .join("bin")
+                .join(if cfg!(target_os = "windows") {
+                    "backend.exe"
+                } else {
+                    "backend"
+                });
 
             println!("Backend path: {:?}", backend_path);
 
-            let mut child = std::process::Command::new(&backend_path)
+            let child = std::process::Command::new(&backend_path)
                 .spawn()
                 .expect("Failed to start backend");
 
