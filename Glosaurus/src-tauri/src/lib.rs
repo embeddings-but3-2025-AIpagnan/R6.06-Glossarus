@@ -7,8 +7,8 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
-use serde_json::Value;
 use reqwest;
+use serde_json::Value;
 
 #[tauri::command]
 fn proxy_request(method: String, url: String, body: Option<Value>) -> Result<Value, String> {
