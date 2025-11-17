@@ -17,10 +17,12 @@ interface AddWordModalProps {
 
 export function SynonymSuggestion({
   word,
+  definition,
   userSynonyms,
   onAddSynonym,
 }: {
   word: string
+  definition: string
   userSynonyms: string[]
   onAddSynonym: (synonym: string) => void
 }) {
@@ -47,6 +49,7 @@ export function SynonymSuggestion({
       console.log("start fetch");
       postJSON("http://127.0.0.1:8000/synonym/getSynonym", {
         word: word.trim(),
+		definition:  definition,
         synonyms: userSynonyms || [],
       })
         .then((data: any) => {
@@ -418,6 +421,7 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 					<img src="/ia.png" className="logo-ia" title="AI Suggestions" />
 					<SynonymSuggestion
 					word={word}
+					definition={definition}
 					userSynonyms={synonyms}
 					onAddSynonym={(syn: string) => {
 						if (!synonyms.includes(syn)) {
