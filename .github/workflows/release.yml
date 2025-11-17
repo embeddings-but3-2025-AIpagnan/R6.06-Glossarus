@@ -66,6 +66,12 @@ jobs:
           mkdir -p ../src-tauri/bin
           cp -f dist/backend* ../src-tauri/bin/
 
+      - name: Sign backend binary (macOS)
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        run: |
+          codesign --force --deep --sign - ./Glosaurus/src-tauri/bin/backend || true
+
       - name: Cleanup pip caches (Linux)
         if: matrix.os == 'ubuntu-22.04'
         shell: bash
