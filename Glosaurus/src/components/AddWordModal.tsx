@@ -301,10 +301,15 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 					value={word}
 					onInput={(e) => {
 						const val = (e.target as HTMLInputElement).value;
-						setWord(val);
-						if (errors.word && val.trim() !== "") {
-							setErrors((prev) => ({ ...prev, word: undefined }));
+
+						
+						if (val.includes(" ")) {
+							setErrors(prev => ({ ...prev, word: "Only one word is allowed" }));
+							return;
 						}
+
+						setWord(val);
+						setErrors(prev => ({ ...prev, word: undefined }));
 					}}
 					onDragOver={(e) => e.preventDefault()} 
 					onDrop={(e) => {
