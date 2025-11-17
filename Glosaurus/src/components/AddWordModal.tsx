@@ -303,15 +303,14 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 							setErrors((prev) => ({ ...prev, word: undefined }));
 						}
 					}}
-					onDragOver={(e) => e.preventDefault()} // permet le drop
+					onDragOver={(e) => e.preventDefault()} 
 					onDrop={(e) => {
 						e.preventDefault();
 						const dt = e.dataTransfer;
 						if (!dt) return;
-						const droppedSyn = dt.getData("text/plain"); // récupérer le synonyme
+						const droppedSyn = dt.getData("text/plain"); 
 						if (droppedSyn) {
-							setWord(droppedSyn); // remplacer le champ word
-							// retirer le synonyme de la liste si besoin
+							setWord(droppedSyn);
 							const index = synonyms.findIndex(s => s === droppedSyn);
 							if (index !== -1) handleRemoveSynonym(index);
 						}
