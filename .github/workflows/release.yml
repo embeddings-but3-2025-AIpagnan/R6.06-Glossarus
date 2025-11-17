@@ -47,21 +47,19 @@ jobs:
           cd Glosaurus
           npm install
 
-      - name: Setup Python (Windows only)
-        if: matrix.platform == 'windows-latest'
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.13"
 
-      - name: Install PyInstaller and compile backend (Windows only)
-        if: matrix.platform == 'windows-latest'
+      - name: Install PyInstaller and compile backend
         working-directory: ./Glosaurus/back-end
         run: |
           pip install -r requirements.txt
           pip install pyinstaller
           pyinstaller run_backend.spec --clean
-          if (!(Test-Path ../src-tauri/bin)) { New-Item -ItemType Directory -Path ../src-tauri/bin | Out-Null }
-          Copy-Item dist/backend.exe ../src-tauri/bin/backend.exe
+          mkdir -p ../src-tauri/bin
+          cp dist/backend* ../src-tauri/bin/
 
       - uses: tauri-apps/tauri-action@v0
         env:
