@@ -54,12 +54,13 @@ jobs:
 
       - name: Install PyInstaller and compile backend
         working-directory: ./Glosaurus/back-end
+        shell: bash
         run: |
           pip install -r requirements.txt
           pip install pyinstaller
           pyinstaller run_backend.spec --clean
           mkdir -p ../src-tauri/bin
-          cp dist/backend* ../src-tauri/bin/
+          cp -f dist/backend* ../src-tauri/bin/
 
       - uses: tauri-apps/tauri-action@v0
         env:
