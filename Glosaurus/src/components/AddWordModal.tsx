@@ -17,10 +17,12 @@ interface AddWordModalProps {
 
 export function SynonymSuggestion({
   word,
+  definition,
   userSynonyms,
   onAddSynonym,
 }: {
   word: string
+  definition: string
   userSynonyms: string[]
   onAddSynonym: (synonym: string) => void
 }) {
@@ -37,7 +39,7 @@ export function SynonymSuggestion({
       return;
     }
 
-    // Reset immédiat pour que l'affichage montre "Chargement..."
+   
     setSynonyms([]);
     setVisibleSynonyms([]);
     setStartIndex(0);
@@ -47,12 +49,12 @@ export function SynonymSuggestion({
       console.log("start fetch");
       postJSON("http://127.0.0.1:8000/synonym/getSynonym", {
         word: word.trim(),
+		definition:  definition,
         synonyms: userSynonyms || [],
       })
         .then((data: any) => {
 			console.log("Réponse API :", data);
 			if (data?.synonyms && Array.isArray(data.synonyms) && data.synonyms.length > 0) {
-				// on force le type en string[]
 				const uniqueSynonyms: string[] = Array.from(new Set(data.synonyms as string[]));
 				setSynonyms(uniqueSynonyms);
 				setVisibleSynonyms(uniqueSynonyms.slice(0, 5));
@@ -134,7 +136,14 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 	const [synonyms, setSynonyms] = useState<string[]>(initialData?.synonyms || []);
 
 	const [currentSynonym, setCurrentSynonym] = useState("");
-	const [errors, setErrors] = useState<{ word?: string; definition?: string }>({});
+	const [errors, setErrors] = useState<{ 
+		word?: string; 
+		definition?: string; 
+		synonyms?: string; 
+		doublons?: string; 
+		doublonsWord?: string 
+	}>({});
+
 
 	const modalRef = useRef<HTMLDivElement | null>(null);
 	const firstInputRef = useRef<HTMLInputElement | null>(null);
@@ -175,13 +184,79 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 		}
 	}, [isOpen]);
 
+	useEffect(() => {
+		const lowerWord = word.trim().toLowerCase();
+
+		const index = synonyms.findIndex(
+			syn => syn.trim().toLowerCase() === lowerWord
+		);
+
+		if (index !== -1) {
+			handleRemoveSynonym(index);
+
+			setErrors(prev => ({
+				...prev,
+				doublonsWord: "You can't add a synonym that is the same as the word"
+			}));
+		} else {
+			setErrors(prev => ({
+				...prev,
+				doublons: undefined
+			}));
+		}
+	}, [word, synonyms]);
+
+
+		
+	const CheckSynonymNotEqualToWord = (syn: string, index?: number): boolean => {
+		const lowerWord = word.trim().toLowerCase();
+		const lowerSyn = syn.trim().toLowerCase();
+
+		if (lowerSyn === lowerWord) {
+			setErrors(prev => ({
+				...prev,
+				definition: prev.definition,
+				word: prev.word,
+				synonyms: "The synonym can't be the same as the word"
+			}));
+			if (index !== undefined) {
+				handleRemoveSynonym(index);
+			}
+			return false;
+		}
+		
+		setErrors(prev => ({ ...prev, synonyms: undefined }));
+		return true;
+	};
+
 	const handleAddSynonym = (e: any) => {
 		if (e.key === "Enter" && currentSynonym.trim() !== "") {
 			e.preventDefault();
-			setSynonyms([...synonyms, currentSynonym.trim()]);
+
+			const syn = currentSynonym.trim().toLowerCase();
+
+			if (!CheckSynonymNotEqualToWord(syn)) {
+				return;
+			}
+
+			if (synonyms.some(s => s.toLowerCase() === syn)) {
+				setErrors(prev => ({
+					...prev,
+					doublons: "This synonym has already been added"
+				}));
+					setCurrentSynonym("");
+					return;
+			}
+
+			setTimeout(() => {
+				setErrors(prev => ({ ...prev, doublons: undefined }));
+			}, 5000);
+
+			setSynonyms([...synonyms, syn]);
 			setCurrentSynonym("");
 		}
 	};
+
 
 	const handleRemoveSynonym = (index: number) => {
 		setSynonyms(synonyms.filter((_, i) => i !== index));
@@ -205,6 +280,8 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 		}
 	};
 
+
+
 	if (!isOpen) return null;
 
 	return (
@@ -224,12 +301,31 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 					value={word}
 					onInput={(e) => {
 						const val = (e.target as HTMLInputElement).value;
+
+						
+						if (val.includes(" ")) {
+							setErrors(prev => ({ ...prev, word: "Only one word is allowed" }));
+							return;
+						}
+
 						setWord(val);
-						if (errors.word && val.trim() !== "") {
-							setErrors((prev) => ({ ...prev, word: undefined }));
+						setErrors(prev => ({ ...prev, word: undefined }));
+					}}
+					onDragOver={(e) => e.preventDefault()} 
+					onDrop={(e) => {
+						e.preventDefault();
+						const dt = e.dataTransfer;
+						if (!dt) return;
+						const droppedSyn = dt.getData("text/plain"); 
+						if (droppedSyn) {
+							setWord(droppedSyn);
+							const index = synonyms.findIndex(s => s === droppedSyn);
+							if (index !== -1) handleRemoveSynonym(index);
 						}
 					}}
 				/>
+
+
 				<nav className="attention">
 					{errors.word && (
 						<>
@@ -271,13 +367,47 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 					type="text"
 					placeholder="Press enter to add a synonym"
 					value={currentSynonym}
-					onInput={(e) => setCurrentSynonym((e.target as HTMLInputElement).value)}
+					onInput={(e) => {
+						const value = (e.target as HTMLInputElement).value.toLowerCase(); 
+						setCurrentSynonym(value);
+					}}
 					onKeyDown={handleAddSynonym}
-				/>
+					onFocus={() => {
+						setErrors(prev => ({ ...prev, doublonsWord: undefined, synonyms: undefined }));
+					}}
+					/>
+
+				{errors.synonyms && (
+					<nav className="attention">
+						<img src="/attention.svg" alt="attention" />
+						<p className="error-text">{errors.synonyms}</p>
+					</nav>
+				)}
+				{errors.doublons && (
+					<nav className="attention">
+						<img src="/attention.svg" alt="attention" />
+						<p className="error-text">{errors.doublons}</p>
+					</nav>
+				)}
+				{errors.doublonsWord && (
+					<nav className="attention">
+						<img src="/attention.svg" alt="attention" />
+						<p className="error-text">{errors.doublonsWord}</p>
+					</nav>
+				)}
 
 				<div className="synonym-list">
 					{synonyms.map((syn, i) => (
-						<span key={i} className="tag">
+						<span
+							key={i}
+							className="tag"
+							draggable={true}
+							onDragStart={(e) => {
+								const dt = e.dataTransfer;
+								if (!dt) return;
+								dt.setData("text/plain", syn);
+							}}
+						>
 							<button
 								className="remove-btn"
 								onClick={() => handleRemoveSynonym(i)}
@@ -288,11 +418,15 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 							{syn}
 						</span>
 					))}
+
 				</div>
+
+
 				<nav>
 					<img src="/ia.png" className="logo-ia" title="AI Suggestions" />
 					<SynonymSuggestion
 					word={word}
+					definition={definition}
 					userSynonyms={synonyms}
 					onAddSynonym={(syn: string) => {
 						if (!synonyms.includes(syn)) {
