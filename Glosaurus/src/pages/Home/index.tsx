@@ -120,7 +120,7 @@ export function Glossaire() {
 										</span>
 									))
 								) : (
-									<span className="no-synonyme">No synonym</span>
+									<span className="no-synonyme">No synonyms</span>
 								)}
 							</td>
 							<td className="action-cell">
