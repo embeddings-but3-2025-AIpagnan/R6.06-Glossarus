@@ -85,6 +85,13 @@ export function Menu() {
         g.name.toLowerCase().includes(search.toLowerCase())
     );
 
+    const getWordCount = (glossaryName: string): number => {
+        const storageKey = `glossary_${glossaryName}`;
+        const words = loadFromStorage(storageKey, []);
+        return Array.isArray(words) ? words.length : 0;
+    };
+
+
     return (
         <div className="glossaire">
             <div className="glossaire-header">
@@ -119,12 +126,12 @@ export function Menu() {
                 value={search}
                 onInput={(e) => setSearch((e.target as HTMLInputElement).value)}
             />
-
+            
             <table className="glossaire-table">
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Description</th>
+                        <th className="Description" >Description </th>
                         <th>Last Modified</th>
                         <th className="actions-column"></th>
                     </tr>
@@ -132,7 +139,11 @@ export function Menu() {
                 <tbody>
                     {filteredGlossaries.map((g, index) => (
                         <tr key={index}>
-                            <td onClick={() => handleOpenGlossary(g.name)} className="Name">{g.name}</td>
+                            <td onClick={() => handleOpenGlossary(g.name)} className="Name">
+                                {g.name}
+                                <span className="badge-count">{getWordCount(g.name)} Word(s)</span>
+                            </td>
+
                             <td onClick={() => handleOpenGlossary(g.name)} className="clickable">{g.description}</td>
                             <td>{g.lastModified || "Never"}</td>
                             <td className="actions-cell">

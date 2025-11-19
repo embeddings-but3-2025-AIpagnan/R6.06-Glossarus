@@ -116,13 +116,11 @@
     max-width: 1200px;
     border-collapse: separate;
     border-spacing: 0;
-    background-color: white;
     border: 2px solid #e4e6eb;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    margin-bottom: 1rem;
 }
+
 
 .glossaire-table th,
 .glossaire-table td {
@@ -153,8 +151,28 @@
     border-bottom: 1px solid #e4e6eb;
 }
 .glossaire-table td.Name {
+   
     color: #000000;
 }
+
+.glossaire-table th.Description {
+    padding-right: 100px;
+}
+
+.glossaire-table td.clickable {
+    padding-right: 100px;
+}
+
+
+.badge-count {
+    margin-left: 20px;
+    padding: 2px 6px;
+    background: #a0a0a0;
+    color: white;
+    border-radius: 6px;
+    font-size: 0.8em;
+}
+
 
 
 .glossaire-table tr.clickable:hover {
