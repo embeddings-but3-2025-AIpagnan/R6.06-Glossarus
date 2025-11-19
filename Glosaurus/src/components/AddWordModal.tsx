@@ -3,15 +3,17 @@ import "./AddWordModal.css";
 import { postJSON } from "../utils/api";
 
 interface AddWordModalProps {
-	isOpen: boolean;
-	onClose: () => void;
-	onAddWord: (word: string, definition: string, synonyms: string[]) => void;
-	initialData?: {
-		word: string;
-		definition: string;
-		synonyms: string[];
-	} | null;
+    isOpen: boolean;
+    onClose: () => void;
+    onAddWord: (word: string, definition: string, synonyms: string[]) => void;
+    initialData?: {
+        word: string;
+        definition: string;
+        synonyms: string[];
+    } | null;
+    isEdit?: boolean;
 }
+
 
 
 
@@ -130,10 +132,13 @@ export function SynonymSuggestion({
 export default SynonymSuggestion;
 
 
-export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWordModalProps) {
+export function AddWordModal({ isOpen, onClose, onAddWord, initialData, isEdit }: AddWordModalProps) {
+
 	const [word, setWord] = useState(initialData?.word || "");
 	const [definition, setDefinition] = useState(initialData?.definition || "");
 	const [synonyms, setSynonyms] = useState<string[]>(initialData?.synonyms || []);
+
+
 
 	const [currentSynonym, setCurrentSynonym] = useState("");
 	const [errors, setErrors] = useState<{ 
@@ -287,7 +292,8 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 	return (
 		<div className="modal-overlay" role="dialog" aria-modal="true">
 			<div className="modal" ref={modalRef}>
-				<h2>Add a New Word</h2>
+				<h2>{isEdit ? "Update Word" : "Add a New Word"}</h2>
+
 
 				<label className={"word-label"}>
 					<span>Word</span>
@@ -438,7 +444,10 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData }: AddWor
 				</nav>
 				<div className="modal-actions">
 					<button className="cancel" onClick={onClose}>Cancel</button>
-					<button className="add" onClick={handleSubmit}>Add Word</button>
+					<button className="add" onClick={handleSubmit}>
+						{isEdit ? "Save Changes" : "Add Word"}
+					</button>
+
 				</div>
 			</div>
 		</div>

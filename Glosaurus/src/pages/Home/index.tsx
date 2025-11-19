@@ -28,7 +28,6 @@ export function Glossaire() {
 		loadFromStorage(STORAGE_KEY, initialWords)
 	);
 	
-	// Load glossary description from the glossaries list
 	const [glossaryDescription, setGlossaryDescription] = useState<string | undefined>();
 	
 	useEffect(() => {
@@ -161,6 +160,7 @@ export function Glossaire() {
 				}}
 				onAddWord={handleAddWord}
 				initialData={editingWord}
+				isEdit={!!editingWord}   // ← ICI
 			/>
 
 			<ExportModal
