@@ -24,6 +24,10 @@ export function Menu() {
     const { route } = useLocation();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+
+    const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
+    
+
     useEffect(() => {
         saveToStorage(STORAGE_KEY, glossaries);
     }, [glossaries]);
@@ -91,7 +95,6 @@ export function Menu() {
         return Array.isArray(words) ? words.length : 0;
     };
 
-
     return (
         <div className="glossaire">
             <div className="glossaire-header">
@@ -131,7 +134,7 @@ export function Menu() {
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th className="Description" >Description </th>
+                        <th className="Description">Description</th>
                         <th>Last Modified</th>
                         <th className="actions-column"></th>
                     </tr>
@@ -139,12 +142,33 @@ export function Menu() {
                 <tbody>
                     {filteredGlossaries.map((g, index) => (
                         <tr key={index}>
-                            <td onClick={() => handleOpenGlossary(g.name)} className="Name">
-                                {g.name}
-                                <span className="badge-count">{getWordCount(g.name)} Word(s)</span>
+                            <td className="Name" onClick={() => handleOpenGlossary(g.name)}>
+                                <span
+                                    className="text-label"
+                                    onMouseEnter={(e) => {
+                                        const rect = (e.target as HTMLElement).getBoundingClientRect();
+                                        setTooltip({ text: g.name, x: rect.left, y: rect.bottom + 4 });
+                                    }}
+                                    onMouseLeave={() => setTooltip(null)}
+                                >
+                                    {g.name}
+                                </span>
+                                <span className="badge-count">{getWordCount(g.name)} word(s)</span>
                             </td>
 
-                            <td onClick={() => handleOpenGlossary(g.name)} className="clickable">{g.description}</td>
+                            <td className="clickable" onClick={() => handleOpenGlossary(g.name)}>
+                                <span
+                                    className="text-label"
+                                    onMouseEnter={(e) => {
+                                        const rect = (e.target as HTMLElement).getBoundingClientRect();
+                                        setTooltip({ text: g.description, x: rect.left, y: rect.bottom + 4 });
+                                    }}
+                                    onMouseLeave={() => setTooltip(null)}
+                                >
+                                    {g.description}
+                                </span>
+                            </td>
+
                             <td>{g.lastModified || "Never"}</td>
                             <td className="actions-cell">
                                 <button
@@ -170,6 +194,16 @@ export function Menu() {
                 </tbody>
             </table>
 
+
+            {tooltip && (
+                <div
+                    className="tooltip-popup"
+                    style={{ left: tooltip.x, top: tooltip.y, display: 'block' }}
+                >
+                    {tooltip.text}
+                </div>
+            )}
+
             {isUpdateModalOpen && editingGlossary && (
                 <UpdateGlossary
                     isOpen={isUpdateModalOpen}
@@ -183,14 +217,12 @@ export function Menu() {
                         const oldStorageKey = `glossary_${editingGlossary.name}`;
                         const newStorageKey = `glossary_${newName}`;
 
-                        
                         if (newName !== editingGlossary.name) {
                             const existingWords = loadFromStorage(oldStorageKey, []);
                             saveToStorage(newStorageKey, existingWords);
                             localStorage.removeItem(oldStorageKey);
                         }
 
-                        
                         setGlossaries(glossaries.map(g =>
                             g.name === editingGlossary.name
                                 ? {
@@ -215,4 +247,4 @@ export function Menu() {
             )}
         </div>
     );
-}
+};

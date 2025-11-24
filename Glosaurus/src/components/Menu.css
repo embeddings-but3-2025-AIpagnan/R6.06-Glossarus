@@ -147,30 +147,138 @@
     word-break: normal;
     overflow-wrap: break-word;
     white-space: normal;
-    max-width: 20ch;
+    max-width: none;
+    
     border-bottom: 1px solid #e4e6eb;
 }
+
+
+
+
 .glossaire-table td.Name {
-   
-    color: #000000;
+    white-space: nowrap;
+    align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 21ch;
+    position: relative;
 }
 
+.glossaire-table td.Name .text-label {
+    max-width: calc(20ch);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+
+.glossaire-table td.Name:hover::after {
+    content: attr(data-fulltext);
+    position: absolute;
+    top: 100%;           
+    left: 0;
+    background: #fff;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    white-space: normal;
+    z-index: 10;
+    max-width: 300px;
+    color: black;
+    margin-top: 4px;    
+}
+
+
+.glossaire-table td.clickable,
 .glossaire-table th.Description {
-    padding-right: 100px;
+    width: 400px;
+    padding-right: 3rem;
+
 }
 
+.glossaire-table td.clickable .text-label {
+    max-width: calc(45ch);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.glossaire-table td.clickable .text-label:hover::after {
+    content: attr(data-fulltext);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    white-space: normal;
+    z-index: 10;
+    max-width: 300px;
+    color: black;
+}
+
+.glossaire-table td.Name,
 .glossaire-table td.clickable {
-    padding-right: 100px;
+    position: relative;
 }
 
+.text-label {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.text-label:hover::after {
+    content: attr(data-fulltext);
+    position: absolute;
+    top: 100%;           
+    left: 0;
+    background: #fff;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    white-space: normal;
+    z-index: 10;
+    max-width: 300px;
+    color: black;
+    margin-top: 4px;  
+}
 
 .badge-count {
-    margin-left: 20px;
+    margin-left: 8px;
     padding: 2px 6px;
     background: #a0a0a0;
     color: white;
     border-radius: 6px;
     font-size: 0.8em;
+    display: inline-block;
+    white-space: nowrap;   
+    flex-shrink: 0;
+    
+}
+
+.tooltip-popup {
+    position: fixed;
+    background: #fff;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    color: black;
+    max-width: 400px;       
+    z-index: 1000;
+    pointer-events: none;
+    white-space: normal;     
+    word-wrap: break-word;
 }
 
 
