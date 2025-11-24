@@ -16,6 +16,9 @@ export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {
     const firstInputRef = useRef<HTMLInputElement | null>(null);
     const previouslyFocused = useRef<Element | null>(null);
 
+    const nameMaxLength = 30;
+    const descriptionMaxLength = 200;
+
     useEffect(() => {
         previouslyFocused.current = document.activeElement;
         const prev = document.body.style.overflow;
@@ -64,20 +67,26 @@ export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {
                         <span>Name</span>
                         <span className="glossary-required">*</span>
                     </label>
-                    <input
-                        ref={firstInputRef}
-                        type="text"
-                        className={`input-name ${errors.name ? "input-error" : ""}`}
-                        placeholder="Enter Glossary name"
-                        value={name}
-                        onInput={(e) => {
-                            const val = (e.target as HTMLInputElement).value;
-                            setName(val);
-                            if (errors.name && val.trim() !== "") {
-                                setErrors((prev) => ({ ...prev, name: undefined }));
-                            }
-                        }}
-                    />
+                    <div className="input-name-container">
+                        <input
+                            ref={firstInputRef}
+                            type="text"
+                            className={`input-name ${errors.name ? "input-error" : ""}`}
+                            placeholder="Enter Glossary name"
+                            value={name}
+                            maxLength={nameMaxLength}
+                            onInput={(e) => {
+                                const val = (e.target as HTMLInputElement).value;
+                                setName(val);
+                                if (errors.name && val.trim() !== "") {
+                                    setErrors((prev) => ({ ...prev, name: undefined }));
+                                }
+                            }}
+                        />
+                        <div className="char-counter">
+                            {name.length}/{nameMaxLength}
+                        </div>
+                    </div>
                     <nav className="attention">
                         {errors.name && (
                             <>
@@ -91,18 +100,24 @@ export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {
                         <span>Description</span>
                         <span className="glossary-required">*</span>    
                     </label>
-                    <textarea
-                        className={`textarea-description ${errors.description ? "input-error" : ""}`}
-                        placeholder="Provide a brief description of the glossary"
-                        value={description}
-                        onInput={(e) => {
-                            const val = (e.target as HTMLTextAreaElement).value;
-                            setDescription(val);
-                            if (errors.description && val.trim() !== "") {
-                                setErrors((prev) => ({ ...prev, description: undefined }));
-                            }
-                        }}
-                    />
+                    <div className="input-name-container">
+                        <textarea
+                            className={`textarea-description ${errors.description ? "input-error" : ""}`}
+                            placeholder="Provide a brief description of the glossary"
+                            value={description}
+                            maxLength={descriptionMaxLength}
+                            onInput={(e) => {
+                                const val = (e.target as HTMLTextAreaElement).value;
+                                setDescription(val);
+                                if (errors.description && val.trim() !== "") {
+                                    setErrors((prev) => ({ ...prev, description: undefined }));
+                                }
+                            }}
+                        />
+                        <div className="char-counter">
+                            {description.length}/{descriptionMaxLength}
+                        </div>
+                    </div>
                     <nav className="attention">
                         {errors.description && (
                             <>

@@ -22,6 +22,9 @@ export function UpdateGlossary({ isOpen, onClose, onAddWord, initialData }: Upda
     const firstInputRef = useRef<HTMLInputElement | null>(null);
     const previouslyFocused = useRef<Element | null>(null);
 
+    const wordMaxLength = 30;
+    const definitionMaxLength = 200;
+
     useEffect(() => {
         if (initialData) {
             setWord(initialData.word);
@@ -80,20 +83,26 @@ export function UpdateGlossary({ isOpen, onClose, onAddWord, initialData }: Upda
                 <h2>Update Glossary</h2>
 
                 <label className="word-label">Word</label>
-                <input
-                    ref={firstInputRef}
-                    type="text"
-                    className={`word-area ${errors.word ? "input-error" : ""}`}
-                    placeholder="Enter the word"
-                    value={word}
-                    onInput={(e) => {
-                        const val = (e.target as HTMLInputElement).value;
-                        setWord(val);
-                        if (errors.word && val.trim() !== "") {
-                            setErrors((prev) => ({ ...prev, word: undefined }));
-                        }
-                    }}
-                />
+                <div className="input-container">
+                    <input
+                        ref={firstInputRef}
+                        type="text"
+                        className={`word-area ${errors.word ? "input-error" : ""}`}
+                        placeholder="Enter the word"
+                        value={word}
+                        maxLength={wordMaxLength}
+                        onInput={(e) => {
+                            const val = (e.target as HTMLInputElement).value;
+                            setWord(val);
+                            if (errors.word && val.trim() !== "") {
+                                setErrors((prev) => ({ ...prev, word: undefined }));
+                            }
+                        }}
+                    />
+                    <div className="char-counter">
+                        {word.length}/{wordMaxLength}
+                    </div>
+                </div>
                 {errors.word && (
                     <nav className="attention">
                         <img src="/attention.svg" alt="attention" />
@@ -102,18 +111,24 @@ export function UpdateGlossary({ isOpen, onClose, onAddWord, initialData }: Upda
                 )}
 
                 <label className="definition-label">Definition</label>
-                <textarea
-                    className={`definition-area ${errors.definition ? "input-error" : ""}`}
-                    placeholder="Enter the definition"
-                    value={definition}
-                    onInput={(e) => {
-                        const val = (e.target as HTMLTextAreaElement).value;
-                        setDefinition(val);
-                        if (errors.definition && val.trim() !== "") {
-                            setErrors((prev) => ({ ...prev, definition: undefined }));
-                        }
-                    }}
-                />
+                <div className="input-container">
+                    <textarea
+                        className={`definition-area ${errors.definition ? "input-error" : ""}`}
+                        placeholder="Enter the definition"
+                        value={definition}
+                        maxLength={definitionMaxLength}
+                        onInput={(e) => {
+                            const val = (e.target as HTMLTextAreaElement).value;
+                            setDefinition(val);
+                            if (errors.definition && val.trim() !== "") {
+                                setErrors((prev) => ({ ...prev, definition: undefined }));
+                            }
+                        }}
+                    />
+                    <div className="char-counter">
+                        {definition.length}/{definitionMaxLength}
+                    </div>
+                </div>
                 {errors.definition && (
                     <nav className="attention">
                         <img src="/attention.svg" alt="attention" />

@@ -152,10 +152,13 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData, isEdit }
 
 	const modalRef = useRef<HTMLDivElement | null>(null);
 	const firstInputRef = useRef<HTMLInputElement | null>(null);
-	const previouslyFocused = useRef<Element | null>(null);
-
-	useEffect(() => {
-	if (initialData) {
+	    const previouslyFocused = useRef<Element | null>(null);
+	
+	    const wordMaxLength = 30;
+	    const definitionMaxLength = 200;
+	    const synonymMaxLength = 30;
+	
+	    useEffect(() => {	if (initialData) {
 		setWord(initialData.word);
 		setDefinition(initialData.definition);
 		setSynonyms(initialData.synonyms);
@@ -299,37 +302,43 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData, isEdit }
 					<span>Word</span>
 					<span className="required">*</span>
 				</label>
-				<input
-					ref={firstInputRef}
-					type="text"
-					className={`word-area ${errors.word ? "input-error" : ""}`}
-					placeholder="Enter the word"
-					value={word}
-					onInput={(e) => {
-						const val = (e.target as HTMLInputElement).value;
+				<div className="input-container">
+					<input
+						ref={firstInputRef}
+						type="text"
+						className={`word-area ${errors.word ? "input-error" : ""}`}
+						placeholder="Enter the word"
+						value={word}
+						maxLength={wordMaxLength}
+						onInput={(e) => {
+							const val = (e.target as HTMLInputElement).value;
 
-						
-						if (val.includes(" ")) {
-							setErrors(prev => ({ ...prev, word: "Only one word is allowed" }));
-							return;
-						}
+							
+							if (val.includes(" ")) {
+								setErrors(prev => ({ ...prev, word: "Only one word is allowed" }));
+								return;
+							}
 
-						setWord(val);
-						setErrors(prev => ({ ...prev, word: undefined }));
-					}}
-					onDragOver={(e) => e.preventDefault()} 
-					onDrop={(e) => {
-						e.preventDefault();
-						const dt = e.dataTransfer;
-						if (!dt) return;
-						const droppedSyn = dt.getData("text/plain"); 
-						if (droppedSyn) {
-							setWord(droppedSyn);
-							const index = synonyms.findIndex(s => s === droppedSyn);
-							if (index !== -1) handleRemoveSynonym(index);
-						}
-					}}
-				/>
+							setWord(val);
+							setErrors(prev => ({ ...prev, word: undefined }));
+						}}
+						onDragOver={(e) => e.preventDefault()} 
+						onDrop={(e) => {
+							e.preventDefault();
+							const dt = e.dataTransfer;
+							if (!dt) return;
+							const droppedSyn = dt.getData("text/plain"); 
+							if (droppedSyn) {
+								setWord(droppedSyn);
+								const index = synonyms.findIndex(s => s === droppedSyn);
+								if (index !== -1) handleRemoveSynonym(index);
+							}
+						}}
+					/>
+					<div className="char-counter">
+						{word.length}/{wordMaxLength}
+					</div>
+				</div>
 
 
 				<nav className="attention">
@@ -346,18 +355,24 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData, isEdit }
 					<span className="required">*</span>
 					
 				</label>
-				<textarea
-					className={`definition-area ${errors.definition ? "input-error" : ""}`}
-					placeholder="Enter the definition"
-					value={definition}
-					onInput={(e) => {
-						const val = (e.target as HTMLTextAreaElement).value;
-						setDefinition(val);
-						if (errors.definition && val.trim() !== "") {
-							setErrors((prev) => ({ ...prev, definition: undefined }));
-						}
-					}}
-				/>
+				<div className="input-container">
+					<textarea
+						className={`definition-area ${errors.definition ? "input-error" : ""}`}
+						placeholder="Enter the definition"
+						value={definition}
+						maxLength={definitionMaxLength}
+						onInput={(e) => {
+							const val = (e.target as HTMLTextAreaElement).value;
+							setDefinition(val);
+							if (errors.definition && val.trim() !== "") {
+								setErrors((prev) => ({ ...prev, definition: undefined }));
+							}
+						}}
+					/>
+					<div className="char-counter">
+						{definition.length}/{definitionMaxLength}
+					</div>
+				</div>
 
 				<nav className="attention">
 					{errors.definition && (
@@ -369,19 +384,25 @@ export function AddWordModal({ isOpen, onClose, onAddWord, initialData, isEdit }
 				</nav>
 
 				<label className={"synonym-label"}>Synonyms (Optional)</label>
-				<input
-					type="text"
-					placeholder="Press enter to add a synonym"
-					value={currentSynonym}
-					onInput={(e) => {
-						const value = (e.target as HTMLInputElement).value.toLowerCase(); 
-						setCurrentSynonym(value);
-					}}
-					onKeyDown={handleAddSynonym}
-					onFocus={() => {
-						setErrors(prev => ({ ...prev, doublonsWord: undefined, synonyms: undefined }));
-					}}
-					/>
+				<div className="input-container">
+					<input
+						type="text"
+						placeholder="Press enter to add a synonym"
+						value={currentSynonym}
+						maxLength={synonymMaxLength}
+						onInput={(e) => {
+							const value = (e.target as HTMLInputElement).value.toLowerCase(); 
+							setCurrentSynonym(value);
+						}}
+						onKeyDown={handleAddSynonym}
+						onFocus={() => {
+							setErrors(prev => ({ ...prev, doublonsWord: undefined, synonyms: undefined }));
+						}}
+						/>
+					<div className="char-counter">
+						{currentSynonym.length}/{synonymMaxLength}
+					</div>
+				</div>
 
 				{errors.synonyms && (
 					<nav className="attention">
