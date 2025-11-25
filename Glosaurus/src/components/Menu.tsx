@@ -96,7 +96,8 @@ export function Menu() {
     };
 
     return (
-        <div className="glossaire">
+
+        <div className="glossaire-page">
             <div className="glossaire-header">
                 <nav className="deco">
                     <img src="/deco.svg" title="Decoration" alt="Decoration" />
@@ -134,6 +135,7 @@ export function Menu() {
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th className="Countword"></th>
                         <th className="Description">Description</th>
                         <th>Last Modified</th>
                         <th className="actions-column"></th>
@@ -153,6 +155,9 @@ export function Menu() {
                                 >
                                     {g.name}
                                 </span>
+                                
+                            </td>
+                            <td>
                                 <span className="badge-count">{getWordCount(g.name)} word(s)</span>
                             </td>
 

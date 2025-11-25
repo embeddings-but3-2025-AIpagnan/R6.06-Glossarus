@@ -11,7 +11,12 @@ type WordItem = {
 	word: string;
 	definition: string;
 	synonyms: string[];
+
 };
+
+function isTruncated(el: HTMLElement) {
+    return el.scrollWidth > el.clientWidth;
+}
 
 const initialWords: WordItem[] = [];
 
@@ -23,6 +28,14 @@ export function Glossaire() {
 
 	const glossaryName = params.name || "Unknown Glossary";
 	const STORAGE_KEY = `glossary_${glossaryName}`;
+
+	const [tooltip, setTooltip] = useState<{
+		text: string;
+		x: number;
+		y: number;
+	} | null>(null);
+
+
 
 	const [words, setWords] = useState<WordItem[]>(() =>
 		loadFromStorage(STORAGE_KEY, initialWords)
@@ -78,100 +91,155 @@ export function Glossaire() {
 		}
 	};
 
-	return (
-		<div className="glossaire">
-			<div className="glossaire-header">
-				<nav className="deco">
-					<img src="/deco.svg" title="Decoration" alt="Decoration" />
-					<h1>{glossaryName}</h1>
-				</nav>
 
-				<div className="header-buttons">
-					<button className="export-btn" onClick={handleExport}>
-						<img src="/export.svg" alt="Export icon" />
-						{'Export'}
-					</button>
-					<button className="new-word" onClick={() => setIsModalOpen(true)}>
-						Add New Word
-					</button>
+
+	return (
+		
+		<div className="glossaire">
+				<div className="glossaire-header">
+					<nav className="deco">
+						<img src="/deco.svg" title="Decoration" alt="Decoration" />
+						<h1>{glossaryName}</h1>
+					</nav>
+
+					<div className="header-buttons">
+						<button className="export-btn" onClick={handleExport}>
+							<img src="/export.svg" alt="Export icon" />
+							{'Export'}
+						</button>
+						<button className="new-word" onClick={() => setIsModalOpen(true)}>
+							Add New Word
+						</button>
+					</div>
 				</div>
+
+				<table className="glossaire-table">
+					<thead>
+						<tr>
+							<th>Word</th>
+							<th>Definition</th>
+							<th>Synonyms</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						{words.map((w) => (
+							<tr key={w.word}>
+								<td className="GlossaryWord" data-fulltext={w.word}>
+									<span
+										className="text-limit"
+										data-fulltext={w.word}
+										onMouseEnter={(e) => {
+											const el = e.target as HTMLElement;
+											if (!isTruncated(el)) return;
+
+											const rect = el.getBoundingClientRect();
+											setTooltip({
+												text: w.word,
+												x: rect.left,
+												y: rect.bottom + 6
+											});
+										}}
+										onMouseLeave={() => setTooltip(null)}
+									>
+										{w.word}
+									</span>
+								</td>
+
+								<td className="GlossaryDefinition">
+									<span
+										className="text-limit"
+										data-fulltext={w.definition}
+										onMouseEnter={(e) => {
+											const el = e.target as HTMLElement;
+											if (!isTruncated(el)) return;
+
+											const rect = el.getBoundingClientRect();
+											setTooltip({
+												text: w.definition,
+												x: rect.left,
+												y: rect.bottom + 6
+											});
+										}}
+										onMouseLeave={() => setTooltip(null)}
+									>
+										{w.definition}
+									</span>
+
+								</td>
+
+								<td className="GlossarySynonyms">
+									{w.synonyms.length > 0 ? (
+										w.synonyms.map((syn) => (
+											<span className="tag" key={syn}>{syn}</span>
+										))
+									) : (
+										<span style={{ color: "#d17178" }}>No synonyms</span>
+									)}
+								</td>
+
+								<td className="action-cell">
+									<div className="action-buttons">
+										<button
+											className="edit-btn"
+											onClick={() => {
+												setEditingWord(w);
+												setIsModalOpen(true);
+											}}
+											title="Modifier"
+										>
+											<img src="/modifier.svg" alt="Modifier" />
+										</button>
+
+										<button
+											className="delete-btn"
+											onClick={() => handleDeleteWord(w.word)}
+											title="Supprimer"
+										>
+											<Trash2 size={18} />
+										</button>
+									</div>
+								</td>
+							</tr>
+
+						))}
+					</tbody>
+				</table>
+
+				<AddWordModal
+					isOpen={isModalOpen}
+					onClose={() => {
+						setIsModalOpen(false);
+						setEditingWord(null);
+					}}
+					onAddWord={handleAddWord}
+					initialData={editingWord}
+					isEdit={!!editingWord}   
+				/>
+
+				<ExportModal
+					isOpen={isExportModalOpen}
+					onClose={() => setIsExportModalOpen(false)}
+					glossary={{
+						name: glossaryName,
+						description: glossaryDescription,
+						words: words,
+					}}
+				/>
+
+				{tooltip && (
+					<div
+						className="tooltip-popup"
+						style={{
+							top: tooltip.y,
+							left: tooltip.x,
+							position: "fixed"
+						}}
+					>
+						{tooltip.text}
+					</div>
+				)}
 			</div>
 
-			<table className="glossaire-table">
-				<thead>
-					<tr>
-						<th>Word</th>
-						<th>Definition</th>
-						<th>Synonyms</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					{words.map((w) => (
-						<tr key={w.word}>
-							<td>{w.word}</td>
-							<td>{w.definition}</td>
-							<td>
-								{w.synonyms?.length ? (
-									w.synonyms.map((s, i) => (
-										<span key={i} className="tag">
-											{s}
-										</span>
-									))
-								) : (
-									<span className="no-synonyme">No synonyms</span>
-								)}
-							</td>
-							<td className="action-cell">
-						<div className="action-buttons">
-							<button
-							className="edit-btn"
-							onClick={() => {
-								setEditingWord(w);
-								setIsModalOpen(true);
-							}}
-							title="Modifier"
-							>
-							<img src="/modifier.svg" alt="Modifier" />
-							</button>
-									<button
-									className="delete-btn"
-									onClick={() => handleDeleteWord(w.word)}
-									title="Supprimer"
-									>
-									<Trash2 size={18} />
-									</button>
-
-									
-								</div>
-							</td>
-
-
-						</tr>
-					))}
-				</tbody>
-			</table>
-
-			<AddWordModal
-				isOpen={isModalOpen}
-				onClose={() => {
-					setIsModalOpen(false);
-					setEditingWord(null);
-				}}
-				onAddWord={handleAddWord}
-				initialData={editingWord}
-				isEdit={!!editingWord}   // ← ICI
-			/>
-
-			<ExportModal
-				isOpen={isExportModalOpen}
-				onClose={() => setIsExportModalOpen(false)}
-				glossary={{
-					name: glossaryName,
-					description: glossaryDescription,
-					words: words,
-				}}
-			/>
-		</div>
 	);
 }

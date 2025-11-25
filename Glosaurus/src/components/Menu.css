@@ -1,4 +1,4 @@
-.glossaire {
+.glossaire-page {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -9,7 +9,6 @@
 }
 
 .search-bar {
-
     width: 100%;
     max-width: 1200px;
     height: 50px;
@@ -26,7 +25,7 @@
     opacity: 1;      
 }
 
-.glossaire-header {
+.glossaire-page .glossaire-header {
     margin-top: 40px;
     width: 100%;
     max-width: 1200px;
@@ -96,7 +95,7 @@
     margin: 0;
 }
 
-.new-word {
+.glossaire-page .new-word {
     background-color: #b32134;
     color: white;
     font-weight: 600;
@@ -111,7 +110,7 @@
     background-color: #921b2a;
 }
 
-.glossaire-table {
+.glossaire-page .glossaire-table {
     width: 100%;
     max-width: 1200px;
     border-collapse: separate;
@@ -121,6 +120,16 @@
     overflow: hidden;
 }
 
+.glossaire-page .glossaire-table {
+    width: 100%;
+    max-width: 1200px;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 2px solid #e4e6eb;
+    border-radius: 12px;
+    overflow: hidden;
+    table-layout: fixed;
+}
 
 .glossaire-table th,
 .glossaire-table td {
@@ -129,103 +138,32 @@
     font-size: 1rem;
 }
 
-.glossaire-table th {
-    color: black;
-    font-weight: 700;
-    font-size: 18px;
-}
-
-.glossaire-table tr:not(:last-child) td {
-    border-bottom: 1px solid #e4e6eb;
-}
-
 .glossaire-table thead {
     background-color: #f5f5f5;
 }
+
 .glossaire-table td {
-    color: #D17178;
-    word-break: normal;
-    overflow-wrap: break-word;
-    white-space: normal;
-    max-width: none;
-    
     border-bottom: 1px solid #e4e6eb;
 }
 
-
-
-
-.glossaire-table td.Name {
-    white-space: nowrap;
-    align-items: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 21ch;
-    position: relative;
-}
-
-.glossaire-table td.Name .text-label {
-    max-width: calc(20ch);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
+.glossaire-table .clickable {
+    border-bottom: 1px solid #e4e6eb;
+    color: #D17178;
 }
 
 
-.glossaire-table td.Name:hover::after {
-    content: attr(data-fulltext);
-    position: absolute;
-    top: 100%;           
-    left: 0;
-    background: #fff;
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    white-space: normal;
-    z-index: 10;
-    max-width: 300px;
-    color: black;
-    margin-top: 4px;    
-}
+.glossaire-table th:nth-child(1),
+.glossaire-table td:nth-child(1) { width: 15ch; }
 
+.glossaire-table th:nth-child(2),
+.glossaire-table td:nth-child(2) { width: 10ch; }
 
-.glossaire-table td.clickable,
-.glossaire-table th.Description {
-    width: 400px;
-    padding-right: 3rem;
+.glossaire-table th:nth-child(3),
+.glossaire-table td:nth-child(3) { width: 35ch; }
 
-}
+.glossaire-table th:nth-child(4),
+.glossaire-table td:nth-child(4) { width: 20ch; }
 
-.glossaire-table td.clickable .text-label {
-    max-width: calc(45ch);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
-}
-
-.glossaire-table td.clickable .text-label:hover::after {
-    content: attr(data-fulltext);
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: #fff;
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    white-space: normal;
-    z-index: 10;
-    max-width: 300px;
-    color: black;
-}
-
-.glossaire-table td.Name,
-.glossaire-table td.clickable {
-    position: relative;
-}
 
 .text-label {
     display: inline-block;
@@ -233,24 +171,23 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
 }
 
 
-.text-label:hover::after {
-    content: attr(data-fulltext);
-    position: absolute;
-    top: 100%;           
-    left: 0;
+.tooltip-popup {
+    position: fixed;
     background: #fff;
-    padding: 8px 10px;
+    padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    white-space: normal;
-    z-index: 10;
-    max-width: 300px;
     color: black;
-    margin-top: 4px;  
+    max-width: 400px;
+    z-index: 1000;
+    pointer-events: none;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .badge-count {
