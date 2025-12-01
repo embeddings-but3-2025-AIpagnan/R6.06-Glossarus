@@ -2,7 +2,9 @@ import { useState } from "preact/hooks";
 import type { Glossary } from "../utils/importExport";
 import {
     downloadGlossaryAsJSON,
-    downloadGlossaryAsMarkdown
+    downloadGlossaryAsMarkdown,
+    exportToJSON,
+    exportToMarkdown,
 } from "../utils/importExport";
 import "./ExportModal.css";
 
@@ -16,6 +18,8 @@ export function ExportModal({ isOpen, onClose, glossary }: ExportModalProps) {
     const [error, setError] = useState<string>('');
     const [success, setSuccess] = useState<string>('');
     const [isExporting, setIsExporting] = useState<boolean>(false);
+    const [previewContent, setPreviewContent] = useState<string | null>(null);
+    const [previewFormat, setPreviewFormat] = useState<'JSON' | 'Markdown' | null>(null);
 
     if (!isOpen) return null;
 
@@ -39,7 +43,7 @@ export function ExportModal({ isOpen, onClose, glossary }: ExportModalProps) {
 
     const handleExportMarkdown = async () => {
         setIsExporting(true);
-        setError('');
+setError('');
         setSuccess('');
         try {
             await downloadGlossaryAsMarkdown(glossary);
@@ -55,6 +59,21 @@ export function ExportModal({ isOpen, onClose, glossary }: ExportModalProps) {
         }
     };
 
+    const handlePreviewJSON = () => {
+        setPreviewContent(exportToJSON(glossary));
+        setPreviewFormat('JSON');
+    };
+
+    const handlePreviewMarkdown = () => {
+        setPreviewContent(exportToMarkdown(glossary));
+        setPreviewFormat('Markdown');
+    };
+
+    const handleClosePreview = () => {
+        setPreviewContent(null);
+        setPreviewFormat(null);
+    };
+
     return (
         <div class="export-modal-overlay" onClick={onClose}>
             <div class="export-modal-content export-modal" onClick={(e) => e.stopPropagation()}>
@@ -66,27 +85,53 @@ export function ExportModal({ isOpen, onClose, glossary }: ExportModalProps) {
                         {error && <div class="alert alert-error">{error}</div>}
                         {success && <div class="alert alert-success">{success}</div>}
 
-                        <p class="section-description">
-                            Export your glossary "<strong>{glossary.name}</strong>" containing <strong>{glossary.words.length}</strong> word(s).
-                        </p>
-                        
-                        <div class="export-options">
-                                <button 
-                                    class="btn btn-primary"
-                                    onClick={handleExportJSON}
-                                    disabled={isExporting}
-                                >
-                                    {isExporting ? 'Exporting…' : 'Export as JSON'}
-                                </button>
+                        {previewContent ? (
+                            <div class="preview-section">
+                                <h3>Preview as {previewFormat}</h3>
+                                <pre class="preview-content"><code>{previewContent}</code></pre>
+                                <button class="btn btn-secondary" onClick={handleClosePreview}>Close Preview</button>
+                            </div>
+                        ) : (
+                            <>
+                                <p class="section-description">
+                                    Export your glossary "<strong>{glossary.name}</strong>" containing <strong>{glossary.words.length}</strong> word(s).
+                                </p>
+                                
+                                <div class="export-options">
+                                        <button 
+                                            class="btn btn-primary"
+                                            onClick={handleExportJSON}
+                                            disabled={isExporting}
+                                        >
+                                            {isExporting ? 'Exporting…' : 'Export as JSON'}
+                                        </button>
 
-                                <button 
-                                    class="btn btn-primary"
-                                    onClick={handleExportMarkdown}
-                                    disabled={isExporting}
-                                >
-                                    {isExporting ? 'Exporting…' : 'Export as Markdown'}
-                                </button>
-                        </div>
+                                        <button 
+                                            class="btn btn-primary"
+                                            onClick={handleExportMarkdown}
+                                            disabled={isExporting}
+                                        >
+                                            {isExporting ? 'Exporting…' : 'Export as Markdown'}
+                                        </button>
+                                </div>
+                                <div class="preview-options">
+                                    <button
+                                        class="btn btn-secondary"
+                                        onClick={handlePreviewJSON}
+                                        disabled={isExporting}
+                                    >
+                                        JSON File Preview
+                                    </button>
+                                    <button
+                                        class="btn btn-secondary"
+                                        onClick={handlePreviewMarkdown}
+                                        disabled={isExporting}
+                                    >
+                                        Markdown File Preview
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
 
