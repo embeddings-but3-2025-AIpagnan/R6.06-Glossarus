@@ -76,14 +76,18 @@ export function importFromJSON(jsonString: string): Glossary {
         }
         
         // Validate each word
-        data.words.forEach((word: any, index: number) => {
-            if (!word.word || typeof word.word !== 'string') {
+        data.words.forEach((word: unknown, index: number) => {
+            if (typeof word !== 'object' || word === null) {
+                throw new Error(`Mot ${index + 1} doit être un objet`);
+            }
+            const wordObj = word as Record<string, unknown>;
+            if (!wordObj.word || typeof wordObj.word !== 'string') {
                 throw new Error(`Mot ${index + 1}: le champ "word" est requis (string)`);
             }
-            if (!word.definition || typeof word.definition !== 'string') {
+            if (!wordObj.definition || typeof wordObj.definition !== 'string') {
                 throw new Error(`Mot ${index + 1}: le champ "definition" est requis (string)`);
             }
-            if (!Array.isArray(word.synonyms)) {
+            if (!Array.isArray(wordObj.synonyms)) {
                 throw new Error(`Mot ${index + 1}: le champ "synonyms" doit être un tableau`);
             }
         });

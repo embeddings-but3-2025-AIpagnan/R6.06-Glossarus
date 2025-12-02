@@ -55,11 +55,11 @@ export function UpdateGlossary({ isOpen, onClose, onAddWord, initialData }: Upda
                 (previouslyFocused.current as HTMLElement | null)?.focus?.();
             };
         }
-    }, [isOpen]);
+    }, [isOpen, onClose]);
 
 
     const handleSubmit = () => {
-        let newErrors: { word?: string; definition?: string } = {};
+        const newErrors: { word?: string; definition?: string } = {};
         if (!word.trim()) newErrors.word = "Please provide a word!";
         if (!definition.trim()) newErrors.definition = "Please provide a description of the word!";
 

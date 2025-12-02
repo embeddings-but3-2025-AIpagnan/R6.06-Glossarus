@@ -4,12 +4,12 @@ export async function postJSON(url: string, data: unknown, timeoutMs = 10000) {
     const id = setTimeout(() => controller.abort(), timeoutMs);
     try {
 
-        const win = (window as any).__TAURI__;
-        console.debug("api.postJSON: detected tauri?", !!win && typeof win.invoke === 'function');
-        if (win && typeof win.invoke === 'function') {
+        const tauri = (window as { __TAURI__?: { invoke: (cmd: string, args?: unknown) => Promise<unknown> } }).__TAURI__;
+        console.debug("api.postJSON: detected tauri?", !!tauri && typeof tauri.invoke === 'function');
+        if (tauri && typeof tauri.invoke === 'function') {
 
             clearTimeout(id);
-            return await win.invoke('proxy_request', {
+            return await tauri.invoke('proxy_request', {
                 method: 'POST',
                 url,
                 body: data,
