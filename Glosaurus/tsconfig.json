@@ -13,9 +13,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-  "jsx": "react-jsx",
-  "jsxImportSource": "preact",
-  "types": ["vite/client"],
+
+    /* JSX Preact */
+    "jsx": "preserve",
+    "jsxImportSource": "preact",
+
+    /* Types */
+    "types": ["vite/client", "vitest"],
 
     /* Linting */
     "strict": true,
@@ -23,6 +27,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "src/test"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
