@@ -1,14 +1,18 @@
 use std::process::Child;
 use std::sync::Mutex;
-use tauri::Manager;
+use tauri::{WindowEvent, Manager};
+use std::fs;
+use reqwest;
+use std::process::Command;
+use serde_json::Value;
+use std::process::Stdio;
+use std::path::Path;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
-use reqwest;
-use serde_json::Value;
 
 #[tauri::command]
 fn proxy_request(method: String, url: String, body: Option<Value>) -> Result<Value, String> {
@@ -48,6 +52,11 @@ pub fn run() {
                 .resource_dir()
                 .expect("Failed to get resource dir");
 
+
+            if let Err(e) = install_ollama_if_needed() {
+                println!("Failed to install Ollama: {:?}", e);
+            }
+
             // Le backend.exe est dans resource_dir/bin/
             let backend_path = resource_dir
                 .join("bin")
@@ -60,6 +69,9 @@ pub fn run() {
             println!("Backend path: {:?}", backend_path);
 
             let child = std::process::Command::new(&backend_path)
+                .current_dir(resource_dir.join("bin"))
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
                 .spawn()
                 .expect("Failed to start backend");
 
@@ -76,15 +88,151 @@ pub fn run() {
             Ok(())
         })
         .on_window_event(|window, event| {
-            if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                let child_mutex: tauri::State<Mutex<Child>> = window.state();
-                if let Ok(mut child) = child_mutex.lock() {
-                    let _ = child.kill();
-                }
-                api.prevent_close();
-                window.close().unwrap();
+            if let WindowEvent::CloseRequested { .. } = event {
+                let child_mutex = window.state::<Mutex<Child>>();
+                if let Ok(child) = child_mutex.lock() {
+                     #[cfg(unix)]
+                    {
+                        let _ = std::process::Command::new("kill")
+                            .arg("-15")
+                            .arg(child.id().to_string())
+                            .status();
+                    }
+
+                    #[cfg(windows)]
+                    {
+                        let _ = child.kill();
+                    }
+                };
             }
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+
+
+fn install_ollama_if_needed() -> anyhow::Result<()> {
+    let ollama_path = find_ollama_path();
+    // 1. detect if ollama exists
+    let has_ollama = Command::new(&ollama_path)
+        .arg("--version")
+        .output()
+        .is_ok();
+
+    if has_ollama {
+        println!("Ollama already installed");
+        return Ok(());
+    }
+
+    println!("Ollama NOT installed → downloading installer");
+
+    #[cfg(target_os = "macos")]
+    {
+        let url = "https://ollama.com/download/Ollama-darwin.zip";
+        let zip_path = "/tmp/ollama.zip";
+
+        let bytes = reqwest::blocking::get(url)?.bytes()?;
+        fs::write(zip_path, &bytes)?;
+
+        Command::new("unzip")
+            .arg(zip_path)
+            .arg("-d")
+            .arg("/Applications")
+            .status()?;
+
+        println!("Launching Ollama.app");
+        Command::new("open")
+            .arg("/Applications/Ollama.app")
+            .spawn()?;
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        let tmp = std::env::temp_dir().join("OllamaSetup.exe");
+        let url = "https://ollama.com/download/OllamaSetup.exe";
+
+        let bytes = reqwest::blocking::get(url)?.bytes()?;
+        fs::write(&tmp, &bytes)?;
+
+        println!("Launching installer");
+        Command::new(&tmp).spawn()?;
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        // Run the official installer script
+        let status = Command::new("sh")
+            .arg("-c")
+            .arg("curl -fsSL https://ollama.com/install.sh | sh")
+            .status()?;
+
+        if !status.success() {
+            anyhow::bail!("Ollama Linux installer failed.");
+        }
+    }
+
+    // 4. Wait until ollama is ready
+    for _ in 0..20 {
+        if Command::new(&ollama_path).arg("--version").output().is_ok() {
+            println!("Ollama ready!");
+            return Ok(());
+        }
+        std::thread::sleep(std::time::Duration::from_secs(1));
+    }
+
+    anyhow::bail!("Ollama did not start");
+}
+
+
+fn find_ollama_path() -> String {
+    // Définir les chemins possibles selon l'OS
+    #[cfg(target_os = "macos")]
+    let candidates = [
+        "/usr/local/bin/ollama",      // classique
+        "/opt/homebrew/bin/ollama",   // homebrew sur Apple Silicon
+        "/usr/bin/ollama",            // fallback mac
+    ];
+
+    #[cfg(target_os = "linux")]
+    let candidates = [
+        "/usr/local/bin/ollama",
+        "/usr/bin/ollama",
+        "/snap/bin/ollama",           // si installé via snap
+    ];
+
+    #[cfg(target_os = "windows")]
+    let candidates = [
+        r"C:\Program Files\Ollama\ollama.exe",
+        r"C:\Program Files (x86)\Ollama\ollama.exe",
+    ];
+
+    // Chercher dans les chemins candidats
+    for c in &candidates {
+        if Path::new(c).exists() {
+            return c.to_string();
+        }
+    }
+
+    // Fallback : chercher dans le PATH
+    if let Ok(path_var) = std::env::var("PATH") {
+        for dir in std::env::split_paths(&path_var) {
+            let exe_name = if cfg!(target_os = "windows") {
+                "ollama.exe"
+            } else {
+                "ollama"
+            };
+            let candidate = dir.join(exe_name);
+            if candidate.exists() {
+                return candidate.to_string_lossy().to_string();
+            }
+        }
+    }
+
+    // Fallback final : juste "ollama" pour que le système essaie
+    if cfg!(target_os = "windows") {
+        "ollama.exe".to_string()
+    } else {
+        "ollama".to_string()
+    }
 }

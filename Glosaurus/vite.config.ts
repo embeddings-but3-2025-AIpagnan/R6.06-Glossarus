@@ -8,9 +8,11 @@ const host = process.env.TAURI_DEV_HOST;
 export default defineConfig(async () => ({
   plugins: [preact()],
   test: {
-    environment: 'jsdom',
     globals: true,
-    setupFiles: './tests/setup.ts'
+    environment: 'happy-dom',
+    setupFiles: './tests/setup.ts',
+    include: ["tests/**/*.tsx"]
+
   },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
