@@ -11,7 +11,7 @@ test('affiche le titre', () => {
   expect(screen.getByText('My Glossaries')).toBeInTheDocument()
 })
 
-test('ajouter un glossary met à jour la liste', () => {
+test('ajouter un glossary met à jour la liste', async () => {
   render(<Menu />)
 
   fireEvent.click(screen.getByText('Create New Glossary'))
@@ -27,5 +27,5 @@ test('ajouter un glossary met à jour la liste', () => {
 
   fireEvent.click(screen.getByText('Add'))
 
-  expect(screen.getByText('TestGlossary')).toBeInTheDocument()
+  expect(await screen.findByText('TestGlossary')).toBeInTheDocument()
 })
