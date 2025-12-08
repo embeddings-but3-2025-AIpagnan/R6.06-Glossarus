@@ -19,7 +19,7 @@ A modern desktop glossary management application built with Tauri, Preact, and T
 
 ### Quick Download
 
-**Latest Release:** [v1.0.0](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest)
+**Latest Release:** [v1.0.1](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest)
 
 **Choose your platform:**
 
@@ -27,10 +27,11 @@ A modern desktop glossary management application built with Tauri, Preact, and T
 |----------|----------|
 | 🪟 Windows | [Setup.exe](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest) \| [MSI Installer](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest) |
 | 🍎 macOS (Apple Silicon) | [DMG](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest) |
+| Linux | [DEB](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest) |
 
 ### Detailed Installation Instructions
 
-See [RELEASE_NOTES.md](RELEASE_NOTES.md) for complete installation instructions for your platform.
+Please see the latest release note for complete installation instructions for your platform.
 
 ## 🚀 Quick Start
 
