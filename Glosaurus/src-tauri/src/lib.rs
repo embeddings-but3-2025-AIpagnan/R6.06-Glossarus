@@ -90,7 +90,7 @@ pub fn run() {
         .on_window_event(|window, event| {
             if let WindowEvent::CloseRequested { .. } = event {
                 let child_mutex = window.state::<Mutex<Child>>();
-                if let Ok(child) = child_mutex.lock() {
+                if let Ok(mut child) = child_mutex.lock() {
                      #[cfg(unix)]
                     {
                         let _ = std::process::Command::new("kill")
