@@ -52,9 +52,24 @@ pub fn run() {
                 .resource_dir()
                 .expect("Failed to get resource dir");
 
+            // Check if Ollama is installed
+            let ollama_path = find_ollama_path();
+            let has_ollama = Command::new(&ollama_path)
+                .arg("--version")
+                .output()
+                .is_ok();
 
-            if let Err(e) = install_ollama_if_needed() {
-                println!("Failed to install Ollama: {:?}", e);
+            if !has_ollama {
+                // Show native OS dialog asking to install Ollama
+                let confirmed = show_ollama_dialog();
+                
+                if confirmed {
+                    if let Err(e) = install_ollama_if_needed() {
+                        println!("Failed to install Ollama: {:?}", e);
+                    }
+                }
+            } else {
+                println!("Ollama already installed");
             }
 
             // Le backend.exe est dans resource_dir/bin/
@@ -110,6 +125,76 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
+
+fn show_ollama_dialog() -> bool {
+    #[cfg(target_os = "macos")]
+    {
+        // Use osascript to show a dialog on macOS
+        let output = Command::new("osascript")
+            .arg("-e")
+            .arg("tell app \"System Events\" to button returned of (display dialog \"Do you want to install Ollama? It's needed for AI suggestions\" buttons {\"Yes\", \"No\"} default button 1 with icon caution)")
+            .output();
+
+        match output {
+            Ok(out) => {
+                let result = String::from_utf8_lossy(&out.stdout);
+                result.contains("Yes")
+            }
+            Err(_) => false,
+        }
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        // Use PowerShell to show a dialog on Windows
+        let output = Command::new("powershell")
+            .arg("-NoProfile")
+            .arg("-Command")
+            .arg("[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null; [System.Windows.Forms.MessageBox]::Show('Do you want to install Ollama? It\\'s needed for AI suggestions', 'Install Ollama', [System.Windows.Forms.MessageBoxButtons]::YesNo) -eq [System.Windows.Forms.DialogResult]::Yes")
+            .output();
+
+        match output {
+            Ok(out) => {
+                let result = String::from_utf8_lossy(&out.stdout);
+                result.trim() == "True"
+            }
+            Err(_) => false,
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        // Try zenity first, then kdialog as fallback
+        let zenity_result = Command::new("zenity")
+            .arg("--question")
+            .arg("--text=Do you want to install Ollama? It's needed for AI suggestions")
+            .arg("--title=Install Ollama")
+            .status();
+
+        match zenity_result {
+            Ok(status) => status.success(),
+            Err(_) => {
+                // Fallback to kdialog
+                let kdialog_result = Command::new("kdialog")
+                    .arg("--yesno")
+                    .arg("Do you want to install Ollama? It's needed for AI suggestions")
+                    .arg("--title")
+                    .arg("Install Ollama")
+                    .status();
+
+                match kdialog_result {
+                    Ok(status) => status.success(),
+                    Err(_) => false,
+                }
+            }
+        }
+    }
+
+    #[cfg(not(any(target_os = "macos", target_os = "windows", target_os = "linux")))]
+    {
+        false
+    }
+}
 
 
 fn install_ollama_if_needed() -> anyhow::Result<()> {
