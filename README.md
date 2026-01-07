@@ -2,7 +2,7 @@
 
 A modern desktop glossary management application built with Tauri, Preact, and TypeScript.
 
-![Version](https://img.shields.io/badge/version-1.0.1-blue)
+![Version](https://img.shields.io/badge/version-1.0.2-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 
 ## ✨ Features
@@ -19,7 +19,7 @@ A modern desktop glossary management application built with Tauri, Preact, and T
 
 ### Quick Download
 
-**Latest Release:** [v1.0.1](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest)
+**Latest Release:** [v1.0.2](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest)
 
 **Choose your platform:**
 
