@@ -1,7 +1,7 @@
 # 🦕 Glosaurus
 
 [![Latest Release](https://img.shields.io/github/v/release/Embedding-Groupe/Application-Glossaire?color=blue&label=Latest%20Release)](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 ![CI/CD](https://github.com/Embedding-Groupe/Application-Glossaire/actions/workflows/release.yml/badge.svg)
 [![Documentation](https://img.shields.io/badge/Documentation-mkdocs-blue)](https://embedding-groupe.github.io/synthese-de-recherche-mkdocs/)
 
