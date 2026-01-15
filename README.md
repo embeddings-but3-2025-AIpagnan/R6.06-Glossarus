@@ -1,9 +1,11 @@
 # 🦕 Glosaurus
 
-A modern desktop glossary management application built with Tauri, Preact, and TypeScript.
-
-![Version](https://img.shields.io/badge/version-1.0.2-blue)
+[![Latest Release](https://img.shields.io/github/v/release/Embedding-Groupe/Application-Glossaire?color=blue&label=Latest%20Release)](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
+![CI/CD](https://github.com/Embedding-Groupe/Application-Glossaire/actions/workflows/release.yml/badge.svg)
+[![Documentation](https://img.shields.io/badge/Documentation-mkdocs-blue)](https://embedding-groupe.github.io/synthese-de-recherche-mkdocs/)
+
+A modern desktop glossary management application built with Tauri, Preact, and TypeScript.
 
 ## ✨ Features
 
@@ -19,15 +21,13 @@ A modern desktop glossary management application built with Tauri, Preact, and T
 
 ### Quick Download
 
-**Latest Release:** [v1.0.2](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest)
-
 **Choose your platform:**
 
 | Platform | Download |
 |----------|----------|
-| 🪟 Windows | [Setup.exe](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest) \| [MSI Installer](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest) |
-| 🍎 macOS (Apple Silicon) | [DMG](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest) |
-| Linux | [DEB](https://github.com/Embedding-Groupe/Application-Glossaire/releases/latest) |
+| 🪟 Windows | [Setup.exe](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v1.0.2/Glosaurus_1.0.2_x64-setup.exe) \| [MSI Installer](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v1.0.2/Glosaurus_1.0.2_x64_en-US.msi) |
+| 🍎 macOS (Apple Silicon) | [DMG](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v1.0.2/Glosaurus_1.0.2_aarch64.dmg) |
+| Linux | [DEB](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v1.0.2/Glosaurus_1.0.2_amd64.deb) \| [AppImage](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v1.0.2/Glosaurus_1.0.2_amd64.AppImage) \| [RPM](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v1.0.2/Glosaurus-1.0.2-1.x86_64.rpm) |
 
 ### Detailed Installation Instructions
 
