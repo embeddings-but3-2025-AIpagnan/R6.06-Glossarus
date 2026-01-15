@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/preact'
-import { Menu } from '../src/components/Menu/Menu'
+import { Menu } from 'src/components/Menu/Menu'
 
 // Mock du localStorage
 beforeEach(() => {
