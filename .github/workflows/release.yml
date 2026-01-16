@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
 
       - name: Setup Rust targets (macOS)
         if: matrix.os == 'macos-latest'
@@ -40,7 +40,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: "3.13"
 
       - name: Preinstall CPU-only PyTorch (Linux)
         if: matrix.os == 'ubuntu-22.04'
@@ -88,3 +88,27 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: ${{ github.ref_name }}
           releaseBody: "Automated release for ${{ github.ref_name }}"
+
+      - name: Update README with download links (Ubuntu only)
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          VERSION=${{ github.ref_name }}
+          # Remove 'v' prefix if present
+          VERSION=${VERSION#v}
+
+          # Update README with new version and download links
+          sed -i "s|\[Setup.exe\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v[0-9.]*.*|\[Setup.exe\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/${{ github.ref_name }}/Glosaurus_${VERSION}_x64-setup.exe)|g" README.md
+          sed -i "s|\[MSI Installer\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v[0-9.]*.*|\[MSI Installer\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/${{ github.ref_name }}/Glosaurus_${VERSION}_x64_en-US.msi)|g" README.md
+          sed -i "s|\[DMG\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v[0-9.]*.*|\[DMG\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/${{ github.ref_name }}/Glosaurus_${VERSION}_aarch64.dmg)|g" README.md
+          sed -i "s|\[DEB\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v[0-9.]*.*|\[DEB\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/${{ github.ref_name }}/Glosaurus_${VERSION}_amd64.deb)|g" README.md
+          sed -i "s|\[AppImage\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v[0-9.]*.*|\[AppImage\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/${{ github.ref_name }}/Glosaurus_${VERSION}_amd64.AppImage)|g" README.md
+          sed -i "s|\[RPM\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/v[0-9.]*.*|\[RPM\](https://github.com/Embedding-Groupe/Application-Glossaire/releases/download/${{ github.ref_name }}/Glosaurus-${VERSION}-1.x86_64.rpm)|g" README.md
+
+      - name: Commit and push README updates (Ubuntu only)
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs: update README with ${{ github.ref_name }} download links" || true
+          git push
