@@ -231,8 +231,12 @@ cd Glosaurus
 # 2️⃣ Install Node.js dependencies
 npm install
 
-# 3️⃣ Start development server with Tauri
-# This will open the application in development mode
+# Install backend dependencies
+python -m venv .venv
+source .venv/bin/activate
+pip install -r back-end/requirements.txt
+
+# Run in development mode
 npm run tauri dev
 
 # 4️⃣ (Optional) Build for production
