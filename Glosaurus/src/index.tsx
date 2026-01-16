@@ -5,6 +5,7 @@ import { Header } from "./components/Header/Header.js";
 import { Glossaire } from "./pages/Home/index.jsx";
 import { NotFound } from "./pages/_404.jsx";
 import { Menu } from "./components/Menu/Menu.tsx";
+import { Parser } from "./pages/Parser/Parser.tsx";
 
 export function App() {
   return (
@@ -14,6 +15,8 @@ export function App() {
         <Router>
           <Route path="/" component={Menu} />
           <Route path="/glossaire/:name" component={Glossaire} />
+          <Route path="/parser" component={Parser} />
+
           <Route default component={NotFound} />
         </Router>
       </main>
