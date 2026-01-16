@@ -28,3 +28,4 @@ dist-ssr
 venv/
 package-lock.json
 build/
+Glosaurus/src-tauri/bin/

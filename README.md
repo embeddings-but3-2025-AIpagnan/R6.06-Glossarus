@@ -115,6 +115,11 @@ cd Glosaurus
 # Install dependencies
 npm install
 
+# Install backend dependencies
+python -m venv .venv
+source .venv/bin/activate
+pip install -r back-end/requirements.txt
+
 # Run in development mode
 npm run tauri dev
 
