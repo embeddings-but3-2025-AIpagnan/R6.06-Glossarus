@@ -46,7 +46,7 @@ export function Parser() {
         <thead>
           <tr>
             <th>Terms</th>
-            <th>Occurence</th>
+            <th>Occurence</th>cd
           </tr>
         </thead>
     </table>

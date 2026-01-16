@@ -113,7 +113,7 @@ body {
 }
 
 
-.Parser-table {
+.g-table {
   width: 100%;
   max-width: 1200px;
   border-collapse: separate;
@@ -124,12 +124,4 @@ body {
   overflow: hidden;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
   table-layout: fixed;
-}
-
-.Parser-table th {
-  color: var(--color-text);
-  font-feature-settings: "dlig" on;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 21px;
 }
