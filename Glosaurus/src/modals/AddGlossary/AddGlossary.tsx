@@ -20,6 +20,10 @@ export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {
   const nameMaxLength = 30;
   const descriptionMaxLength = 200;
 
+  // Génération d'IDs uniques pour l'accessibilité
+  const nameId = "glossary-name";
+  const descriptionId = "glossary-description";
+
   useEffect(() => {
     previouslyFocused.current = document.activeElement;
     const prev = document.body.style.overflow;
@@ -74,12 +78,14 @@ export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {
       >
         <h2>Create a new glossary</h2>
         <form className="modal-form" onSubmit={handleSubmit}>
-          <label className="name-label">
+          {/* Label correctement associé au champ */}
+          <label htmlFor={nameId} className="name-label">
             <span>Name</span>
             <span className="glossary-required">*</span>
           </label>
           <div className="input-name-container">
             <input
+              id={nameId}
               ref={firstInputRef}
               type="text"
               className={`input-name ${errors.name ? "input-error" : ""}`}
@@ -107,12 +113,14 @@ export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {
             )}
           </nav>
 
-          <label className="description-label">
+          {/* Label correctement associé au champ */}
+          <label htmlFor={descriptionId} className="description-label">
             <span>Description</span>
             <span className="glossary-required">*</span>
           </label>
           <div className="input-name-container">
             <textarea
+              id={descriptionId}
               className={`textarea-description ${errors.description ? "input-error" : ""}`}
               placeholder="Provide a brief description of the glossary"
               value={description}
