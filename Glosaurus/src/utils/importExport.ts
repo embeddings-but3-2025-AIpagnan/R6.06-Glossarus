@@ -108,82 +108,99 @@ export function importFromJSON(jsonString: string): Glossary {
  */
 export function importFromMarkdown(markdownString: string): Glossary {
     const lines = markdownString.split('\n');
-    const words: WordItem[] = [];
-    let glossaryName = 'Imported Glossary';
-    let description: string | undefined;
-    
-    // Extract glossary name from first H1
-    const h1Match = markdownString.match(/^#\s+(.+)$/m);
-    if (h1Match) {
-        glossaryName = h1Match[1].trim();
-    }
-    
-    // Extract description from H3 subtitle
-    const h3Match = markdownString.match(/^###\s+(.+)$/m);
-    if (h3Match) {
-        const desc = h3Match[1].trim();
-        // Only exclude "Glossary" if it's exactly that word
-        if (desc && desc !== 'Glossary') {
-            description = desc;
-        }
-    }
-    
-    // Parse table format
-    let inTable = false;
-    
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        
-        // Detect table header
-        if (line.startsWith('| Word') || line.startsWith('| Mot')) {
-            inTable = true;
-            continue;
-        }
-        
-        // Skip separator line
-        if (line.startsWith('| ---')) {
-            continue;
-        }
-        
-        // Parse table rows
-        if (inTable && line.startsWith('|')) {
-            // Split by unescaped pipes only (not \|)
-            const cells = line
-                .split(/(?<!\\)\|/)
-                .map(c => c.trim())
-                .filter(c => c)
-                .map(c => c.replace(/\\\|/g, '|')); // Unescape pipes in content
-            
-            if (cells.length >= 3) {
-                const word = cells[0];
-                const definition = cells[1];
-                const synonymsText = cells[2];
-                
-                // Parse synonyms
-                let synonyms: string[] = [];
-                if (synonymsText && synonymsText !== '_None_' && synonymsText !== '_Aucun_') {
-                    synonyms = synonymsText.split(',').map(s => s.trim()).filter(s => s);
-                }
-                
-                words.push({
-                    word,
-                    definition,
-                    synonyms
-                });
-            }
-        }
-    }
-    
+
+    const glossaryName = extractH1(markdownString);
+    const description = extractH3(markdownString);
+    const words = parseTable(lines);
+
     if (words.length === 0) {
         throw new Error('No words found in Markdown file');
     }
-    
+
     return {
         name: glossaryName,
         description,
         words
     };
 }
+
+function extractH1(markdown: string): string {
+    const match = markdown.match(/^#\s+(.+)$/m);
+    return match ? match[1].trim() : 'Imported Glossary';
+}
+
+function extractH3(markdown: string): string | undefined {
+    const match = markdown.match(/^###\s+(.+)$/m);
+    if (!match) return;
+
+    const desc = match[1].trim();
+    return desc && desc !== 'Glossary' ? desc : undefined;
+}
+
+function parseTable(lines: string[]): WordItem[] {
+    const words: WordItem[] = [];
+    let inTable = false;
+
+    for (const rawLine of lines) {
+        const line = rawLine.trim();
+
+        if (isTableHeader(line)) {
+            inTable = true;
+            continue;
+        }
+
+        if (isSeparator(line)) continue;
+
+        if (inTable && isTableRow(line)) {
+            const item = parseRow(line);
+            if (item) words.push(item);
+        }
+    }
+
+    return words;
+}
+
+function isTableHeader(line: string): boolean {
+    return line.startsWith('| Word') || line.startsWith('| Mot');
+}
+
+function isSeparator(line: string): boolean {
+    return line.startsWith('| ---');
+}
+
+function isTableRow(line: string): boolean {
+    return line.startsWith('|');
+}
+
+function parseRow(line: string): WordItem | null {
+    const cells = line
+        .split(/(?<!\\)\|/)
+        .map(c => c.trim())
+        .filter(Boolean)
+        .map(c => c.replace(/\\\|/g, '|'));
+
+    if (cells.length < 3) return null;
+
+    const [word, definition, synonymsText] = cells;
+
+    return {
+        word,
+        definition,
+        synonyms: parseSynonyms(synonymsText)
+    };
+}
+
+function parseSynonyms(text: string): string[] {
+    if (!text || text === '_None_' || text === '_Aucun_') {
+        return [];
+    }
+
+    return text
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+}
+
 
 /**
  * Download a file to the user's computer
