@@ -1,18 +1,16 @@
 from fastapi import APIRouter, Request
-import json
-from src.ia_contexte.miniLM import miniLM
-
+from src.ia_contexte.miniLM import Ollama
 
 router = APIRouter(prefix="/synonym", tags=["synonyms"])
 
-lm = miniLM()
+lm = Ollama()
+
 
 @router.post("/getSynonym")
-async def getSynonym(request: Request):
-    """
-    envoyer le mot a Resyf pour avoir une liste de synonymes.
+async def get_synonym(request: Request) -> dict[str, list[str]]:
+    """Envoyer le mot a Resyf pour avoir une liste de synonymes.
     envoyer les mots du contexte et la liste de synonymes a l'ia pour choisir les meilleurs synonymes.
-    récupérer dans une liste les synonymes ayant un taux de pertinence superieur a un certain seuil 
+    récupérer dans une liste les synonymes ayant un taux de pertinence superieur a un certain seuil
     puis envoyer cette liste en reponse à l'application.
     """
     req = await request.json()
@@ -24,14 +22,10 @@ async def getSynonym(request: Request):
     print(synonyms)
     print(definition)
 
-
-
-
-
-    suggestion_synonyms = lm.getSynonyms(word, definition, synonyms)
+    suggestion_synonyms = lm.get_synonyms(word, definition, synonyms)
     print(suggestion_synonyms.split(","))
 
-    return {"synonyms" : suggestion_synonyms.split(",")}
+    return {"synonyms": suggestion_synonyms.split(",")}
 
 
 """
