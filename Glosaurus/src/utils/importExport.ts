@@ -32,7 +32,7 @@ export function exportToJSON(glossary: Glossary): string {
 export function exportToMarkdown(glossary: Glossary): string {
     // Helper function to escape pipe characters in table cells
     const escapeCell = (text: string): string => {
-        return text.replace(/\|/g, '\\|');
+        return text.replaceAll(/\|/g, '\\|');
     };
     
     let markdown = `# ${glossary.name}\n`;
@@ -177,7 +177,7 @@ function parseRow(line: string): WordItem | null {
         .split(/(?<!\\)\|/)
         .map(c => c.trim())
         .filter(Boolean)
-        .map(c => c.replace(/\\\|/g, '|'));
+        .map(c => c.replaceAll(/\\\|/g, '|'));
 
     if (cells.length < 3) return null;
 
@@ -241,7 +241,7 @@ export async function downloadFile(content: string, filename: string, mimeType: 
  */
 export async function downloadGlossaryAsJSON(glossary: Glossary): Promise<void> {
     const json = exportToJSON(glossary);
-    const filename = `${glossary.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`;
+    const filename = `${glossary.name.replaceAll(/[^a-z0-9]/gi, '_').toLowerCase()}.json`;
     await downloadFile(json, filename, 'application/json');
 }
 
@@ -250,7 +250,7 @@ export async function downloadGlossaryAsJSON(glossary: Glossary): Promise<void> 
  */
 export async function downloadGlossaryAsMarkdown(glossary: Glossary): Promise<void> {
     const markdown = exportToMarkdown(glossary);
-    const filename = `${glossary.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.md`;
+    const filename = `${glossary.name.replaceAll(/[^a-z0-9]/gi, '_').toLowerCase()}.md`;
     await downloadFile(markdown, filename, 'text/markdown');
 }
 
