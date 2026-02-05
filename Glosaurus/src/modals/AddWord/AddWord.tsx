@@ -349,7 +349,7 @@ export function AddWordModal({
               const droppedSyn = dt.getData("text/plain");
               if (droppedSyn) {
                 setWord(droppedSyn);
-                const index = synonyms.findIndex((s) => s === droppedSyn);
+                const index = synonyms.indexOf(droppedSyn);
                 if (index !== -1) handleRemoveSynonym(index);
               }
             }}
