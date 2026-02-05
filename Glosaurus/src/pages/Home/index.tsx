@@ -50,6 +50,7 @@ export function Glossaire() {
   >()
 
   useEffect(() => {
+    console.log('Loading glossary data for:', glossaryName)
     const glossaries = loadFromStorage('glossaries', []) as Array<{
       name: string
       description: string
@@ -57,11 +58,16 @@ export function Glossaire() {
     const currentGlossary = glossaries.find((g) => g.name === glossaryName)
     if (currentGlossary) {
       setGlossaryDescription(currentGlossary.description)
+      console.log('Glossary description loaded:', currentGlossary.description)
+    } else {
+      console.log('Glossary not found:', glossaryName)
     }
   }, [glossaryName])
 
   useEffect(() => {
+    console.log('Saving words to storage for glossary:', glossaryName, '. Word count:', words.length)
     saveToStorage(STORAGE_KEY, words)
+    console.log('Words saved successfully')
   }, [words, STORAGE_KEY])
 
   useEffect(() => {
@@ -76,33 +82,43 @@ export function Glossaire() {
     definition: string,
     synonyms: string[]
   ) => {
+    console.log('Adding word:', word)
     const entry: WordItem = { word, definition, synonyms }
 
     if (editingWord) {
+      console.log('Editing existing word:', editingWord.word)
       setWords((prev) =>
         prev.map((w) => (w.word === editingWord.word ? entry : w))
       )
       setEditingWord(null)
     } else {
+      console.log('Adding new word to glossary')
       setWords((prev) => [...prev, entry])
     }
 
     setIsModalOpen(false)
+    console.log('Word added/updated successfully. Total words:', words.length + 1)
   }
 
   const handleDeleteWord = (wordToDelete: string) => {
+    console.log('Deleting word:', wordToDelete)
     if (confirm(`Supprimer le mot "${wordToDelete}" ?`)) {
       setWords((prev) => prev.filter((w) => w.word !== wordToDelete))
+      console.log('Word deleted successfully')
+    } else {
+      console.log('Word deletion cancelled')
     }
   }
 
   const [, setExportError] = useState<string | null>(null)
 
   const handleExport = async () => {
+    console.log('Starting export of glossary:', glossaryName, 'with', words.length, 'words')
     setExportError(null)
     try {
       const endpoint = '/api/words'
       await postWords(endpoint, words)
+      console.log('Export completed successfully')
       setIsExportModalOpen(true)
     } catch (err) {
       console.error('Export failed', err)

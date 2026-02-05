@@ -64,17 +64,19 @@ export function exportToMarkdown(glossary: Glossary): string {
  * @throws Error if JSON is invalid or missing required fields
  */
 export function importFromJSON(jsonString: string): Glossary {
+    console.log('Starting JSON import process')
     try {
         const data = JSON.parse(jsonString);
-        
+        console.log('JSON parsed successfully')
+
         if (!data.name || typeof data.name !== 'string') {
             throw new Error('Le glossaire doit contenir un champ "name" (string)');
         }
-        
+
         if (!Array.isArray(data.words)) {
             throw new Error('Le glossaire doit contenir un champ "words" (array)');
         }
-        
+
         // Validate each word
         data.words.forEach((word: unknown, index: number) => {
             if (typeof word !== 'object' || word === null) {
@@ -91,9 +93,11 @@ export function importFromJSON(jsonString: string): Glossary {
                 throw new Error(`Mot ${index + 1}: le champ "synonyms" doit être un tableau`);
             }
         });
-        
+
+        console.log('JSON validation passed. Imported glossary:', data.name, 'with', data.words.length, 'words')
         return data as Glossary;
     } catch (error) {
+        console.error('JSON import failed:', error)
         if (error instanceof SyntaxError) {
             throw new Error('Format JSON invalide');
         }
@@ -107,7 +111,9 @@ export function importFromJSON(jsonString: string): Glossary {
  * @throws Error if markdown format is invalid
  */
 export function importFromMarkdown(markdownString: string): Glossary {
+    console.log('Starting Markdown import process')
     const lines = markdownString.split('\n');
+    console.log('Markdown file split into', lines.length, 'lines')
 
     const glossaryName = extractH1(markdownString);
     const description = extractH3(markdownString);
@@ -117,6 +123,7 @@ export function importFromMarkdown(markdownString: string): Glossary {
         throw new Error('No words found in Markdown file');
     }
 
+    console.log('Markdown import completed. Imported glossary:', glossaryName, 'with', words.length, 'words')
     return {
         name: glossaryName,
         description,
@@ -258,17 +265,22 @@ export async function downloadGlossaryAsMarkdown(glossary: Glossary): Promise<vo
  * Read file content from File object
  */
 export function readFileContent(file: File): Promise<string> {
+    console.log('Reading file content:', file.name, 'Size:', file.size, 'bytes')
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => {
             const content = e.target?.result;
             if (typeof content === 'string') {
+                console.log('File read successfully. Content length:', content.length)
                 resolve(content);
             } else {
                 reject(new Error('Impossible de lire le fichier'));
             }
         };
-        reader.onerror = () => reject(new Error('Erreur lors de la lecture du fichier'));
+        reader.onerror = () => {
+            console.error('Error reading file:', file.name)
+            reject(new Error('Erreur lors de la lecture du fichier'));
+        };
         reader.readAsText(file);
     });
 }
@@ -278,14 +290,19 @@ export function readFileContent(file: File): Promise<string> {
  * Automatically detects format based on file extension
  */
 export async function importGlossaryFromFile(file: File): Promise<Glossary> {
+    console.log('Starting file import process for:', file.name)
     const content = await readFileContent(file);
     const extension = file.name.split('.').pop()?.toLowerCase();
-    
+    console.log('Detected file extension:', extension)
+
     if (extension === 'json') {
+        console.log('Processing as JSON file')
         return importFromJSON(content);
     } else if (extension === 'md' || extension === 'markdown') {
+        console.log('Processing as Markdown file')
         return importFromMarkdown(content);
     } else {
+        console.error('Unsupported file format:', extension)
         throw new Error('Format de fichier non supporté. Utilisez .json ou .md');
     }
 }

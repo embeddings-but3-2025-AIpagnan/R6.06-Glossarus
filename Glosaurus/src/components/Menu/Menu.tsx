@@ -34,7 +34,9 @@ export function Menu() {
   } | null>(null)
 
   useEffect(() => {
+    console.log('Saving glossaries to storage. Count:', glossaries.length)
     saveToStorage(STORAGE_KEY, glossaries)
+    console.log('Glossaries saved successfully')
   }, [glossaries])
 
   useEffect(() => {
@@ -48,12 +50,14 @@ export function Menu() {
     name: string
     description: string
   }) => {
+    console.log('Adding new glossary:', glossary.name)
     const newGlossary: Glossary = {
       ...glossary,
       lastModified: new Date().toLocaleString(),
     }
     setGlossaries([...glossaries, newGlossary])
     setIsModalOpen(false)
+    console.log('Glossary added successfully. Total:', glossaries.length + 1)
   }
 
   const handleFileImport = async (e: Event) => {
@@ -61,11 +65,14 @@ export function Menu() {
     const file = target.files?.[0]
     if (!file) return
 
+    console.log('Starting file import:', file.name)
     try {
       const importedGlossary = await importGlossaryFromFile(file)
+      console.log('Glossary imported from file:', importedGlossary.name, 'with', importedGlossary.words.length, 'words')
 
       const storageKey = `glossary_${importedGlossary.name}`
       saveToStorage(storageKey, importedGlossary.words)
+      console.log('Words saved to storage for glossary:', importedGlossary.name)
 
       const newGlossary: Glossary = {
         name: importedGlossary.name,
@@ -76,25 +83,33 @@ export function Menu() {
       }
 
       setGlossaries([...glossaries, newGlossary])
+      console.log('Glossary added to list. Total:', glossaries.length + 1)
       window.alert(`Glossary "${importedGlossary.name}" imported successfully!`)
     } catch (error) {
+      console.error('File import failed:', error)
       window.alert(
         `Error during import: ${error instanceof Error ? error.message : 'Unknown error'}`
       )
     }
 
     if (fileInputRef.current) fileInputRef.current.value = ''
+    console.log('File import process completed')
   }
 
   const handleDeleteGlossary = (index: number) => {
+    const glossaryToDelete = glossaries[index]
+    console.log('Deleting glossary:', glossaryToDelete.name, 'at index:', index)
     if (confirm('Delete this glossary?')) {
-      const glossaryToDelete = glossaries[index]
       localStorage.removeItem(`glossary_${glossaryToDelete.name}`)
       setGlossaries(glossaries.filter((_, i) => i !== index))
+      console.log('Glossary deleted successfully. Total:', glossaries.length - 1)
+    } else {
+      console.log('Glossary deletion cancelled')
     }
   }
 
   const handleOpenGlossary = (name: string) => {
+    console.log('Opening glossary:', name)
     setGlossaries(
       glossaries.map((g) =>
         g.name === name
@@ -104,11 +119,13 @@ export function Menu() {
     )
 
     route(`/glossaire/${encodeURIComponent(name)}`)
+    console.log('Navigation to glossary page initiated')
   }
 
   const filteredGlossaries = glossaries.filter((g) =>
     g.name.toLowerCase().includes(search.toLowerCase())
   )
+  console.log('Filtered glossaries based on search:', search, 'Results:', filteredGlossaries.length)
 
   const getWordCount = (glossaryName: string): number => {
     const storageKey = `glossary_${glossaryName}`
