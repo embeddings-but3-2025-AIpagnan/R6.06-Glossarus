@@ -132,7 +132,7 @@ export function importFromMarkdown(markdownString: string): Glossary {
 }
 
 function extractH1(markdown: string): string {
-    const match = markdown.match(/^#\s+(.+)$/m);
+    const match = markdown.match(/^#\s+([^\n\r]+?)$/m);
     return match ? match[1].trim() : 'Imported Glossary';
 }
 
