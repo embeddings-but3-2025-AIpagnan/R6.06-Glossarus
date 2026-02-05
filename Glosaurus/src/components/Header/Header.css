@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
@@ -7,7 +8,7 @@ html, body {
 .header {
 	display: flex;
 	align-items: center;
-	justify-content: flex-start; 
+	justify-content: flex-start;
 	background-color: #B51621;
 	padding: 0 2rem;
 	box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
@@ -31,16 +32,16 @@ html, body {
 }
 
 .header-left .logo {
-
-	width: 70px; /* réduit un peu pour l’alignement visuel */
+	/* réduit un peu pour l’alignement visuel */
+	width: 70px;
 	height: auto;
 	object-fit: contain;
-	display: block;        
+	display: block;
 
 }
 
 .header-left .app-name {
-		font-size: 2rem;
+	font-size: 2rem;
 	font-weight: 700;
 	color: white;
 	margin: 0;
@@ -51,17 +52,16 @@ html, body {
 
 .separator {
 	width: 2px;
-	height: 70px; 
+	height: 70px;
 	background-color: white;
 	margin: 0 1.5rem;
 }
-
 
 .nav {
 	display: flex;
 	gap: 1.5rem;
 	align-items: center;
-	margin-left: 1rem; 
+	margin-left: 1rem;
 }
 
 .nav a {
@@ -71,14 +71,8 @@ html, body {
 	font-size: 1.5rem;
 	padding-top: 6px;
 	transition: color 0.2s, border-bottom 0.2s;
-}
-
-
-
-.nav a {
 	border-bottom: 2px solid #B51621;
 }
-
 
 .header-button {
 	display: flex;
@@ -89,11 +83,8 @@ html, body {
 .header-left .app-name,
 .nav a,
 .new-glossary {
-	font-family: 'Inter', 'sans-serif';
+	font-family: 'Inter', sans-serif;
 }
-
-
-
 
 @media (max-width: 640px) {
 	.header {
