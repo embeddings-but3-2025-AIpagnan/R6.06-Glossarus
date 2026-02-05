@@ -65,11 +65,17 @@ export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {
   };
 
   return (
-<div onClick={() => void 0} role="button" />
-<div onClick={() => void 0} role="presentation" />
-<input type="text" onClick={() => void 0} />
-<button onClick={() => void 0} className="foo" /> 
-<div onClick={() => void 0} role="button" aria-hidden /> 
+    <div
+      className="modal-backdrop"
+      role="dialog"
+      aria-modal="true"
+      onClick={onClose}
+    >
+      <div
+        className="modal-content"
+        ref={modalRef}
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2>Create a new glossary</h2>
         <form className="modal-form" onSubmit={handleSubmit}>
           {/* Label correctement associé au champ */}

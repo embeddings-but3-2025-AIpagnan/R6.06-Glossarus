@@ -185,7 +185,7 @@ export function Menu() {
         </thead>
         <tbody>
           {filteredGlossaries.map((g, index) => (
-            <tr key={index}>
+            <tr key={g.name}>
               <td className="Name" onClick={() => handleOpenGlossary(g.name)}>
                 <button
                   type="button"
