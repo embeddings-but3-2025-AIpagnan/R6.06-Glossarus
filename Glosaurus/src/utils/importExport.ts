@@ -137,7 +137,7 @@ function extractH1(markdown: string): string {
 }
 
 function extractH3(markdown: string): string | undefined {
-    const match = markdown.match(/^###\s+(.+)$/m);
+    const match = markdown.match(/^###(?=(\s+))\1([^\n\r]+?)$/m);
     if (!match) return;
 
     const desc = match[1].trim();
