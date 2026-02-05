@@ -170,12 +170,12 @@ export function Menu() {
           {filteredGlossaries.map((g, index) => (
             <tr key={index}>
               <td className="Name" onClick={() => handleOpenGlossary(g.name)}>
-                <span
+                <button
+                  type="button"
                   className="text-label"
+                  aria-label={`Voir le nom complet: ${g.name}`}
                   onMouseEnter={(e) => {
-                    const rect = (
-                      e.target as HTMLElement
-                    ).getBoundingClientRect()
+                    const rect = (e.target as HTMLElement).getBoundingClientRect()
                     setTooltip({
                       text: g.name,
                       x: rect.left,
@@ -183,9 +183,29 @@ export function Menu() {
                     })
                   }}
                   onMouseLeave={() => setTooltip(null)}
+                  onFocus={(e) => {
+                    const rect = (e.target as HTMLElement).getBoundingClientRect()
+                    setTooltip({
+                      text: g.name,
+                      x: rect.left,
+                      y: rect.bottom + 4,
+                    })
+                  }}
+                  onBlur={() => setTooltip(null)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      const rect = (e.target as HTMLElement).getBoundingClientRect()
+                      setTooltip({
+                        text: g.name,
+                        x: rect.left,
+                        y: rect.bottom + 4,
+                      })
+                    }
+                  }}
                 >
                   {g.name}
-                </span>
+                </button>
               </td>
               <td>
                 <span className="badge-count">
@@ -197,12 +217,12 @@ export function Menu() {
                 className="clickable"
                 onClick={() => handleOpenGlossary(g.name)}
               >
-                <span
+                <button
+                  type="button"
                   className="text-label"
+                  aria-label={`Voir la description complète: ${g.description.substring(0, 30)}${g.description.length > 30 ? '...' : ''}`}
                   onMouseEnter={(e) => {
-                    const rect = (
-                      e.target as HTMLElement
-                    ).getBoundingClientRect()
+                    const rect = (e.target as HTMLElement).getBoundingClientRect()
                     setTooltip({
                       text: g.description,
                       x: rect.left,
@@ -210,9 +230,29 @@ export function Menu() {
                     })
                   }}
                   onMouseLeave={() => setTooltip(null)}
+                  onFocus={(e) => {
+                    const rect = (e.target as HTMLElement).getBoundingClientRect()
+                    setTooltip({
+                      text: g.description,
+                      x: rect.left,
+                      y: rect.bottom + 4,
+                    })
+                  }}
+                  onBlur={() => setTooltip(null)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      const rect = (e.target as HTMLElement).getBoundingClientRect()
+                      setTooltip({
+                        text: g.description,
+                        x: rect.left,
+                        y: rect.bottom + 4,
+                      })
+                    }
+                  }}
                 >
                   {g.description}
-                </span>
+                </button>
               </td>
 
               <td>{g.lastModified || 'Never'}</td>
@@ -272,11 +312,11 @@ export function Menu() {
               glossaries.map((g) =>
                 g.name === editingGlossary.name
                   ? {
-                      ...g,
-                      name: newName,
-                      description: newDescription,
-                      lastModified: new Date().toLocaleString(),
-                    }
+                    ...g,
+                    name: newName,
+                    description: newDescription,
+                    lastModified: new Date().toLocaleString(),
+                  }
                   : g
               )
             )
