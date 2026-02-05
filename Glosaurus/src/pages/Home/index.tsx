@@ -148,12 +148,11 @@ export function Glossaire() {
           {words.map((w) => (
             <tr key={w.word}>
               <td className="GlossaryWord" data-fulltext={w.word}>
-                <span
+                <button
+                  type="button"
                   className="text-limit"
                   data-fulltext={w.word}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Voir le texte complet: ${w.word}`}
+                  aria-label={`Voir le mot complet: ${w.word}`}
                   onMouseEnter={(e) => {
                     const el = e.target as HTMLElement
                     if (!isTruncated(el)) return
@@ -179,36 +178,26 @@ export function Glossaire() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
+                      const el = e.target as HTMLElement
+                      if (!isTruncated(el)) return
+                      const rect = el.getBoundingClientRect()
+                      setTooltip({
+                        text: w.word,
+                        x: rect.left,
+                        y: rect.bottom + 6,
+                      })
                     }
                   }}
                 >
                   {w.word}
-                </span>
+                </button>
               </td>
 
               <td className="GlossaryDefinition">
-                <span
+                <button
+                  type="button"
                   className="text-limit"
                   data-fulltext={w.definition}
-                  onMouseEnter={(e) => {
-                    const el = e.target as HTMLElement
-                    if (!isTruncated(el)) return
-
-                    const rect = el.getBoundingClientRect()
-                    setTooltip({
-                      text: w.definition,
-                      x: rect.left,
-                      y: rect.bottom + 6,
-                    })
-                  }}
-                  onMouseLeave={() => setTooltip(null)}
-                >
-                  {w.definition}
-                </span><span
-                  className="text-limit"
-                  data-fulltext={w.definition}
-                  role="button"
-                  tabIndex={0}
                   aria-label={`Voir la définition complète: ${w.definition.substring(0, 30)}${w.definition.length > 30 ? '...' : ''}`}
                   onMouseEnter={(e) => {
                     const el = e.target as HTMLElement
@@ -247,7 +236,7 @@ export function Glossaire() {
                   }}
                 >
                   {w.definition}
-                </span>
+                </button>
               </td>
 
               <td className="GlossarySynonyms">
@@ -266,6 +255,7 @@ export function Glossaire() {
                 <div className="action-buttons">
                   <button
                     className="edit-btn"
+                    type="button"
                     onClick={() => {
                       setEditingWord(w)
                       setIsModalOpen(true)
@@ -277,6 +267,7 @@ export function Glossaire() {
 
                   <button
                     className="delete-btn"
+                    type="button"
                     onClick={() => handleDeleteWord(w.word)}
                     title="Supprimer"
                   >
