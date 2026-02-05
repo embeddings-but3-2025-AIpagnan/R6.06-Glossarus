@@ -32,7 +32,7 @@ export function exportToJSON(glossary: Glossary): string {
 export function exportToMarkdown(glossary: Glossary): string {
     // Helper function to escape pipe characters in table cells
     const escapeCell = (text: string): string => {
-        return text.replaceAll(/\|/g, '\\|');
+        return text.replaceAll('|', '\\|');
     };
     
     let markdown = `# ${glossary.name}\n`;
@@ -177,7 +177,7 @@ function parseRow(line: string): WordItem | null {
         .split(/(?<!\\)\|/)
         .map(c => c.trim())
         .filter(Boolean)
-        .map(c => c.replaceAll(/\\\|/g, '|'));
+        .map(c => c.replaceAll('\\|', '|'));
 
     if (cells.length < 3) return null;
 
