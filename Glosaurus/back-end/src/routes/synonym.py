@@ -1,5 +1,9 @@
+import logging
+
 from fastapi import APIRouter, Request
-from src.ia_contexte.miniLM import Ollama
+from src.ia_contexte.ollama import Ollama
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/synonym", tags=["synonyms"])
 
@@ -13,17 +17,19 @@ async def get_synonym(request: Request) -> dict[str, list[str]]:
     récupérer dans une liste les synonymes ayant un taux de pertinence superieur a un certain seuil
     puis envoyer cette liste en reponse à l'application.
     """
+    logger.info("Received request to get synonyms")
+
     req = await request.json()
     word = req.get("word")
     synonyms = req.get("synonyms")
     definition = req.get("definition")
 
-    print(word)
-    print(synonyms)
-    print(definition)
+    logger.debug(f"Input word: {word}")
+    logger.debug(f"Input synonyms: {synonyms}")
+    logger.debug(f"Input definition: {definition}")
 
     suggestion_synonyms = lm.get_synonyms(word, definition, synonyms)
-    print(suggestion_synonyms.split(","))
+    logger.info(f"Generated synonyms: {suggestion_synonyms.split(',')}")
 
     return {"synonyms": suggestion_synonyms.split(",")}
 
