@@ -4,9 +4,8 @@ import { postWords } from '../../utils/api'
 import { AddWordModal } from '../../modals/AddWord/AddWord'
 import { ExportModal } from '../../modals/Export/Export'
 import './style.css'
-import { useRoute } from 'preact-iso'
+import { useRoute, useLocation } from 'preact-iso'
 import { Trash2 } from 'lucide-preact'
-import { useLocation } from 'preact-iso'
 
 
 
