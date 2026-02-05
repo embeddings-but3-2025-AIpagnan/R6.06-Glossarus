@@ -129,7 +129,7 @@ export function Menu() {
             className="import-btn"
             onClick={() => fileInputRef.current?.click()}
           >
-            <img src="/import.svg" alt="Import icon" />
+            <img src="/import.svg" alt="Import icon"/>
             Import
           </button>
           <button className="new-word" onClick={() => setIsModalOpen(true)}>

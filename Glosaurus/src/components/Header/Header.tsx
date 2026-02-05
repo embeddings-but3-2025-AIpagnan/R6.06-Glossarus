@@ -1,4 +1,4 @@
-//import { useLocation } from 'preact-iso';
+
 import './Header.css';
 
 export function Header() {

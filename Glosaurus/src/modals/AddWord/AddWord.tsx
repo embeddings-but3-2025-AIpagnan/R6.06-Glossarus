@@ -102,29 +102,37 @@ export function SynonymSuggestion({
     setStartIndex(nextIndex);
   };
 
+  const renderSuggestionContent = () => {
+    if (loading) {
+      return "Chargement...";
+    }
+    
+    if (visibleSynonyms.length > 0) {
+      return (
+        <>
+          {visibleSynonyms.map((syn, i) => (
+            <span
+              key={i}
+              className="clickable-synonym"
+              onClick={() => onAddSynonym(syn)}
+              title="Cliquer pour ajouter ce synonyme"
+            >
+              {syn}
+              {i < visibleSynonyms.length - 1 && ", "}
+            </span>
+          ))}
+        </>
+      );
+    }
+    
+    return "No suggestion found";
+  };
+
   return (
     <div className="ai-suggestion">
       <p>
         AI Suggestions:{" "}
-        {loading ? (
-          "Chargement..."
-        ) : visibleSynonyms.length > 0 ? (
-          <>
-            {visibleSynonyms.map((syn, i) => (
-              <span
-                key={i}
-                className="clickable-synonym"
-                onClick={() => onAddSynonym(syn)}
-                title="Cliquer pour ajouter ce synonyme"
-              >
-                {syn}
-                {i < visibleSynonyms.length - 1 && ", "}
-              </span>
-            ))}
-          </>
-        ) : (
-          "No suggestion found"
-        )}
+        {renderSuggestionContent()}
       </p>
 
       {!loading && synonyms.length > 5 && (
