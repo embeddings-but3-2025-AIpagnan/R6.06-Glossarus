@@ -151,10 +151,12 @@ export function Glossaire() {
                 <span
                   className="text-limit"
                   data-fulltext={w.word}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Voir le texte complet: ${w.word}`}
                   onMouseEnter={(e) => {
                     const el = e.target as HTMLElement
                     if (!isTruncated(el)) return
-
                     const rect = el.getBoundingClientRect()
                     setTooltip({
                       text: w.word,
@@ -163,6 +165,22 @@ export function Glossaire() {
                     })
                   }}
                   onMouseLeave={() => setTooltip(null)}
+                  onFocus={(e) => {
+                    const el = e.target as HTMLElement
+                    if (!isTruncated(el)) return
+                    const rect = el.getBoundingClientRect()
+                    setTooltip({
+                      text: w.word,
+                      x: rect.left,
+                      y: rect.bottom + 6,
+                    })
+                  }}
+                  onBlur={() => setTooltip(null)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                    }
+                  }}
                 >
                   {w.word}
                 </span>
@@ -184,6 +202,49 @@ export function Glossaire() {
                     })
                   }}
                   onMouseLeave={() => setTooltip(null)}
+                >
+                  {w.definition}
+                </span><span
+                  className="text-limit"
+                  data-fulltext={w.definition}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Voir la définition complète: ${w.definition.substring(0, 30)}${w.definition.length > 30 ? '...' : ''}`}
+                  onMouseEnter={(e) => {
+                    const el = e.target as HTMLElement
+                    if (!isTruncated(el)) return
+                    const rect = el.getBoundingClientRect()
+                    setTooltip({
+                      text: w.definition,
+                      x: rect.left,
+                      y: rect.bottom + 6,
+                    })
+                  }}
+                  onMouseLeave={() => setTooltip(null)}
+                  onFocus={(e) => {
+                    const el = e.target as HTMLElement
+                    if (!isTruncated(el)) return
+                    const rect = el.getBoundingClientRect()
+                    setTooltip({
+                      text: w.definition,
+                      x: rect.left,
+                      y: rect.bottom + 6,
+                    })
+                  }}
+                  onBlur={() => setTooltip(null)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      const el = e.target as HTMLElement
+                      if (!isTruncated(el)) return
+                      const rect = el.getBoundingClientRect()
+                      setTooltip({
+                        text: w.definition,
+                        x: rect.left,
+                        y: rect.bottom + 6,
+                      })
+                    }
+                  }}
                 >
                   {w.definition}
                 </span>
