@@ -106,25 +106,34 @@ export function SynonymSuggestion({
     if (loading) {
       return "Chargement...";
     }
-    
+
     if (visibleSynonyms.length > 0) {
       return (
         <>
           {visibleSynonyms.map((syn, i) => (
-            <span
+            <button
+              type="button"
               key={i}
               className="clickable-synonym"
               onClick={() => onAddSynonym(syn)}
               title="Cliquer pour ajouter ce synonyme"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onAddSynonym(syn)
+                }
+              }}
             >
               {syn}
+
               {i < visibleSynonyms.length - 1 && ", "}
-            </span>
-          ))}
+            </button>
+          ))
+          }
         </>
       );
     }
-    
+
     return "No suggestion found";
   };
 
