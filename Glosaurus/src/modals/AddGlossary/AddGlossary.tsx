@@ -72,7 +72,7 @@ export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {
       aria-label="Close modal"
       onClick={onClose}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.key === 'Escape') {
           e.preventDefault();
           onClose();
         }
