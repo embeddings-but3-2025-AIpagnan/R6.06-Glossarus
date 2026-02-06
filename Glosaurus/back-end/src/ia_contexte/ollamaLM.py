@@ -13,20 +13,21 @@ class Ollama:
     def __init__(self) -> None:
         logger.info("Initializing Ollama client")
         ollama_path = self.find_ollama_path()
-        logger.info(f"Found Ollama at: {ollama_path}")
+        logger.info("Found Ollama at: %s", ollama_path)
 
         logger.info("Pulling model qwen3:0.6b")
-        result = subprocess.run([ollama_path, "pull", "qwen3:0.6b"], check=True)
+        result = subprocess.run([ollama_path, "pull", "qwen3:0.6b"], check=True)  # noqa: S603
         if result.returncode == 0:
             logger.info("Model qwen3:0.6b pulled successfully")
         else:
             logger.error(
-                f"Failed to pull model qwen3:0.6b. Return code: {result.returncode}",
+                "Failed to pull model qwen3:0.6b. Return code: %s",
+                result.returncode,
             )
 
     def get_synonyms(self, word: str, definition: str, synonyms: list[str]) -> str:
-        logger.info(f"Generating synonyms for word: '{word}'")
-        logger.debug(f"Definition: '{definition}', Existing synonyms: {synonyms}")
+        logger.info("Generating synonyms for word: '%s'", word)
+        logger.debug("Definition: '%s', Existing synonyms: %s", definition, synonyms)
 
         # Règle de base : comment le modèle doit se comporter
         system_prompt = f"""
@@ -45,14 +46,14 @@ class Ollama:
         )
 
         result = response["response"]
-        logger.info(f"Successfully generated synonyms for word: '{word}'")
-        logger.debug(f"Generated synonyms: {result}")
+        logger.info("Successfully generated synonyms for word: '%s'", word)
+        logger.debug("Generated synonyms: %s", result)
 
         return result
 
     @staticmethod
     def find_ollama_path() -> Path:
-        # Définir les chemins candidats selon l’OS
+        # Définir les chemins candidats selon l'OS
         if sys.platform == "darwin":  # macOS
             candidates = [
                 Path("/usr/local/bin/ollama"),  # classique

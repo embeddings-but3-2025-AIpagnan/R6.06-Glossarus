@@ -1,7 +1,7 @@
 import logging
 
 from fastapi import APIRouter, Request
-from src.ia_contexte.ollama import Ollama
+from src.ia_contexte.ollamaLM import Ollama
 
 logger = logging.getLogger(__name__)
 
@@ -24,17 +24,17 @@ async def get_synonym(request: Request) -> dict[str, list[str]]:
     synonyms = req.get("synonyms")
     definition = req.get("definition")
 
-    logger.debug(f"Input word: {word}")
-    logger.debug(f"Input synonyms: {synonyms}")
-    logger.debug(f"Input definition: {definition}")
+    logger.debug("Input word: %s", word)
+    logger.debug("Input synonyms: %s", synonyms)
+    logger.debug("Input definition: %s", definition)
 
     suggestion_synonyms = lm.get_synonyms(word, definition, synonyms)
-    logger.info(f"Generated synonyms: {suggestion_synonyms.split(',')}")
+    logger.info("Generated synonyms: %s", suggestion_synonyms.split(","))
 
     return {"synonyms": suggestion_synonyms.split(",")}
 
 
 """
-récupérer les mots ajouter par les utilisateurs 
+récupérer les mots ajouter par les utilisateurs
 puis les envoyer a l'ia pour avoir leur proximité sémantique et leur attribuer leur couleur.
 """

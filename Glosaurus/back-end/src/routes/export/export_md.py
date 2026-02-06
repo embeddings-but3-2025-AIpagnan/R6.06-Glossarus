@@ -32,7 +32,7 @@ class Tableau:
         ligne_formatee = []
         for valeur in valeurs:
             if isinstance(valeur, list):  # Si la valeur est une liste
-                valeur = ", ".join(map(str, valeur))  # Convertit en texte "a, b, c"
+                valeur = ", ".join(map(str, valeur))  # noqa: PLW2901
             ligne_formatee.append(str(valeur))
 
         self.data.append(ligne_formatee)
