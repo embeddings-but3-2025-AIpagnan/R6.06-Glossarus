@@ -67,12 +67,21 @@ export function AddGlossaryModal({ onClose, onAdd }: AddGlossaryModalProps) {
   return (
     <div
       className="modal-backdrop"
-      role="dialog"
-      aria-modal="true"
+      role="button"
+      tabIndex={0}
+      aria-label="Close modal"
       onClick={onClose}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClose();
+        }
+      }}
     >
       <div
         className="modal-content"
+        role="dialog"
+        aria-modal="true"
         ref={modalRef}
         onClick={(e) => e.stopPropagation()}
       >
