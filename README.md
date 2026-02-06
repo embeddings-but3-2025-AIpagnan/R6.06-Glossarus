@@ -202,9 +202,8 @@ sudo apt-get update
 
 # Install all required dependencies
 sudo apt-get install -y \
-  libwebkit2gtk-4.0-dev \
+  libappindicator3-1 \
   libwebkit2gtk-4.1-dev \
-  libappindicator3-dev \
   librsvg2-dev \
   patchelf
 ```
@@ -212,7 +211,7 @@ sudo apt-get install -y \
 **Verification :**
 ```bash
 # Test if packages are installed
-pkg-config --modversion webkit2gtk-4.0
+pkg-config --modversion webkit2gtk-4.1
 ```
 
 </details>
@@ -233,8 +232,10 @@ npm install
 
 # Install backend dependencies
 python -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate (Linux & MacOS) / .venv/Scripts/Activate.ps1 (Windows)
+
 pip install -r back-end/requirements.txt
+cd src-tauri && cargo update && cd ..
 
 # Run in development mode
 npm run tauri dev
