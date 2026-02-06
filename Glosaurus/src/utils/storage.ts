@@ -1,27 +1,37 @@
-/**
- * DEPRECATED: Wrapper de stockage pour la compatibilité rétroactive
- *
- * Les nouvelles implémentations doivent utiliser:
- * @see src/infrastructure/storage/LocalStorageProvider.ts
- * @see src/infrastructure/DependencyContainer.ts
- */
-
-import { DependencyContainer } from '../infrastructure/DependencyContainer'
-
-const container = DependencyContainer.getInstance()
-const storageProvider = container.getStorageProvider()
-
-// Réexporte les fonctions pour la compatibilité
+// Simple localStorage helpers with safe fallbacks.
 export function loadFromStorage<T>(key: string, fallback: T): T {
-    return storageProvider.load(key, fallback);
+    console.log('Loading data from storage with key:', key)
+    try {
+        const raw = localStorage.getItem(key);
+        const result = raw ? (JSON.parse(raw) as T) : fallback;
+        console.log('Successfully loaded data from storage for key:', key)
+        return result;
+    } catch {
+        console.warn('Failed to load data from storage for key:', key, 'Returning fallback')
+        return fallback;
+    }
 }
 
 export function saveToStorage<T>(key: string, data: T): void {
-    storageProvider.save(key, data);
+    console.log('Saving data to storage with key:', key, 'Data length:', JSON.stringify(data).length)
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        console.log('Data saved successfully to storage for key:', key)
+    } catch (error) {
+        console.error('Failed to save data to storage for key:', key, 'Error:', error)
+        // ignore (quota, private mode...)
+    }
 }
 
 export function clearStorage(key: string): void {
-    storageProvider.remove(key);
+    console.log('Clearing storage for key:', key)
+    try {
+        localStorage.removeItem(key);
+        console.log('Storage cleared successfully for key:', key)
+    } catch (error) {
+        console.error('Failed to clear storage for key:', key, 'Error:', error)
+        // ignore
+    }
 }
 
-export const DEFAULT_STORAGE_KEY = 'glossaire_words'
+export const DEFAULT_STORAGE_KEY = 'glossaire_words';

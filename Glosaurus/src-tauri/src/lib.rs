@@ -72,19 +72,14 @@ pub fn run() {
                 println!("Ollama already installed");
             }
 
-            // Le backend est dans resource_dir/bin/ (préfère backend-new.* si présent)
-            let bin_dir = resource_dir.join("bin");
-            let candidates: [&str; 2] = if cfg!(target_os = "windows") {
-                ["backend-new.exe", "backend.exe"]
-            } else {
-                ["backend-new", "backend"]
-            };
-
-            let backend_path = candidates
-                .iter()
-                .map(|name| bin_dir.join(name))
-                .find(|p| p.exists())
-                .unwrap_or_else(|| bin_dir.join(candidates[1]));
+            // Le backend.exe est dans resource_dir/bin/
+            let backend_path = resource_dir
+                .join("bin")
+                .join(if cfg!(target_os = "windows") {
+                    "backend.exe"
+                } else {
+                    "backend"
+                });
 
             println!("Backend path: {:?}", backend_path);
 
