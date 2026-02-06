@@ -13,9 +13,9 @@ export class GlossaryService {
   private readonly STORAGE_KEY = 'glossaries'
 
   constructor(
-    private repository: IGlossaryRepository,
-    private storage: IStorageProvider
-  ) {}
+    private readonly repository: IGlossaryRepository,
+    private readonly storage: IStorageProvider
+  ) { }
 
   /**
    * Crée un nouveau glossaire et le persiste en stockage
